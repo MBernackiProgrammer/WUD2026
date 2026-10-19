@@ -1,0 +1,202 @@
+<div
+  class="curator-messages"
+  role="log"
+  aria-live="polite"
+  aria-relevant="additions"
+>
+  @if (chat.restoring()) {
+    <p role="status">Wracam do naszej rozmowy…</p>
+  }
+  @for (message of chat.messages(); track message.id) {
+    <article
+      class="curator-message"
+      [class.from-user]="message.user"
+      [attr.aria-label]="message.user ? 'Twoja wiadomość' : 'Odpowiedź przewodnika'"
+    >
+      <p>{{ message.text }}</p>
+      @for (card of message.events; track card.event.id) {
+        <section
+          class="curator-event"
+          [attr.aria-label]="card.event.title"
+        >
+          <p class="curator-event-category">{{ card.event.category }}</p>
+          <h3>
+            <a [routerLink]="card.detailUrl">{{ card.event.title }}</a>
+          </h3>
+          <p class="curator-event-date">
+            <time [attr.datetime]="card.event.date + 'T' + card.event.time">
+              {{ card.event.date | date: 'dd.MM.yyyy' }} · {{ card.event.time }}
+            </time>
+          </p>
+          <p>
+            {{ card.event.room }}
+            @if (card.event.duration !== null) {
+              · {{ card.event.duration }} min
+            }
+            @if (card.event.price !== null) {
+              · {{ card.event.price === 0 ? 'Wstęp wolny' : 'od ' + card.event.price + ' zł' }}
+            }
+          </p>
+          <p class="curator-event-reason">{{ card.reason }}</p>
+          <div class="curator-event-actions">
+            @if (ticketLink(card.ticketUrl); as url) {
+              <a
+                pButton
+                class="button dark"
+                [href]="url"
+                [attr.aria-label]="'Kup bilet: ' + card.event.title"
+              >
+                KUP BILET
+                <app-icon name="diagonal" />
+              </a>
+            } @else {
+              <a
+                pButton
+                class="button outline"
+                [routerLink]="card.detailUrl"
+              >
+                ZOBACZ SZCZEGÓŁY
+                <app-icon name="arrow" />
+              </a>
+            }
+            @if (googleLink(card.googleCalendarUrl) || card.calendarPath) {
+              <button
+                pButton
+                type="button"
+                class="button outline"
+                aria-haspopup="dialog"
+                [attr.aria-label]="'Zapisz w kalendarzu: ' + card.event.title"
+                (click)="openCalendar(card, $event)"
+              >
+                Zapisz w kalendarzu
+                <app-icon name="calendar" />
+              </button>
+            }
+          </div>
+          <a
+            class="curator-event-source"
+            [routerLink]="card.detailUrl"
+          >
+            Źródło: repertuar Filharmonii
+            <app-icon name="diagonal" />
+          </a>
+        </section>
+      }
+    </article>
+  }
+  @if (chat.pendingQuestion()) {
+    <article
+      class="curator-message from-user"
+      aria-label="Twoja wiadomość"
+    >
+      <p>{{ chat.pendingQuestion() }}</p>
+    </article>
+  }
+  @if (chat.busy()) {
+    <p
+      class="curator-thinking"
+      role="status"
+    >
+      Przygotowuję odpowiedź
+      <span
+        class="curator-thinking-dots"
+        aria-hidden="true"
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </span>
+    </p>
+  }
+</div>
+<p-dialog
+  header="Zapisz w kalendarzu"
+  styleClass="calendar-choice-dialog"
+  appendTo="body"
+  [visible]="calendarEvent() !== null"
+  (visibleChange)="!$event && calendarEvent.set(null)"
+  (onHide)="restoreCalendarFocus()"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: '420px', maxWidth: 'calc(100vw - 32px)' }"
+>
+  @if (calendarEvent(); as card) {
+    <p class="calendar-choice-event">{{ card.event.title }}</p>
+    <p class="calendar-choice-description">Wybierz swój kalendarz.</p>
+    <div class="calendar-choice-options">
+      @if (googleLink(card.googleCalendarUrl); as google) {
+        <a
+          pButton
+          class="button outline"
+          [href]="google"
+          target="_blank"
+          rel="noopener noreferrer"
+          (click)="calendarEvent.set(null)"
+        >
+          Google Calendar
+          <app-icon name="diagonal" />
+        </a>
+      }
+      @if (card.calendarPath) {
+        <a
+          pButton
+          class="button outline"
+          [href]="calendarFile(card.event.id)"
+          (click)="calendarEvent.set(null)"
+        >
+          Apple Calendar
+          <app-icon name="calendar" />
+        </a>
+        <a
+          pButton
+          class="button outline"
+          [href]="calendarFile(card.event.id)"
+          (click)="calendarEvent.set(null)"
+        >
+          Outlook
+          <app-icon name="calendar" />
+        </a>
+        <p class="calendar-choice-note">
+          Apple i Outlook: pobierz plik i otwórz go w kalendarzu, aby zatwierdzić zapis.
+        </p>
+      }
+    </div>
+  }
+</p-dialog>
+@if (chat.error()) {
+  <div
+    class="curator-error"
+    role="alert"
+  >
+    <p>{{ chat.error() }}</p>
+    <button
+      pButton
+      type="button"
+      class="button outline"
+      [disabled]="chat.busy()"
+      (click)="chat.retry()"
+    >
+      Spróbuj ponownie
+    </button>
+  </div>
+}
+@if (!chat.busy() && !chat.error() && chat.followUps().length) {
+  <div
+    class="curator-follow-ups"
+    role="group"
+    aria-label="Proponowane odpowiedzi"
+  >
+    @for (prompt of chat.followUps(); track prompt) {
+      <button
+        pButton
+        type="button"
+        (click)="followUp.emit(prompt)"
+      >
+        {{ prompt }}
+        <app-icon name="arrow" />
+      </button>
+    }
+  </div>
+}

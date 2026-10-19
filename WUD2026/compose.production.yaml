@@ -1,0 +1,142 @@
+name: filharmonia-production
+services:
+  gateway:
+    image: caddy:2-alpine
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS:-${SITE_HOST:?Set SITE_HOST}}
+    ports:
+      - "${HTTP_BIND:-80}:80"
+      - "${HTTPS_BIND:-443}:443"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    networks:
+      application:
+        ipv4_address: ${GATEWAY_IP:-172.30.240.2}
+    depends_on:
+      frontend: { condition: service_healthy }
+      admin: { condition: service_healthy }
+      api: { condition: service_healthy }
+    restart: unless-stopped
+  frontend:
+    build: ../WUD2026F
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      HOST: 0.0.0.0
+      INTERNAL_API_URL: ${INTERNAL_API_URL:-http://api:8080/api}
+      PUBLIC_API_URL: ${PUBLIC_API_URL:-/api}
+      PUBLIC_ADMIN_URL: ${PUBLIC_ADMIN_URL:-/admin/}
+      NG_ALLOWED_HOSTS: ${NG_ALLOWED_HOSTS:-${SITE_HOST}}
+      TRUST_PROXY_HEADERS: "true"
+    networks: [application]
+    depends_on:
+      api: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://127.0.0.1:4000/_health',r=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    restart: unless-stopped
+  admin:
+    build: ../WUD2026Admin
+    environment:
+      PUBLIC_API_URL: ${PUBLIC_API_URL:-/api}
+      PUBLIC_SITE_URL: ${PUBLIC_SITE_URL:-https://${SITE_HOST}}
+    networks: [application]
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:8080/healthz"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    restart: unless-stopped
+  api:
+    build:
+      context: .
+      dockerfile: WUD2026/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Production}
+      ASPNETCORE_URLS: http://+:8080
+      AllowedHosts: ${ALLOWED_HOSTS:-${SITE_HOST};api;localhost}
+      ConnectionStrings__ContentDatabase: ${ConnectionStrings__ContentDatabase:-}
+      Database__Host: ${DATABASE_HOST:-postgres}
+      Database__Port: ${DATABASE_PORT:-5432}
+      Database__Name: ${POSTGRES_DB:-WUD2027}
+      Database__Username: ${POSTGRES_USER:-filharmonia}
+      Database__Password: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}
+      Database__SslMode: ${DATABASE_SSL_MODE:-Prefer}
+      Database__ApplyMigrationsOnStartup: ${DATABASE_MIGRATE:-true}
+      Content__FilePath: ${CONTENT_FILE_PATH:-/app/Seed/content.json}
+      Content__PublicationIntervalSeconds: ${PUBLICATION_INTERVAL_SECONDS:-5}
+      Identity__FrontendUrl: ${PUBLIC_SITE_URL:-https://${SITE_HOST}}
+      Identity__RequireConfirmedEmail: ${REQUIRE_CONFIRMED_EMAIL:-true}
+      Identity__BootstrapAdmin__Email: ${BOOTSTRAP_ADMIN_EMAIL:-}
+      Identity__BootstrapAdmin__Password: ${BOOTSTRAP_ADMIN_PASSWORD:-}
+      Authentication__Google__ClientId: ${GOOGLE_CLIENT_ID:-}
+      Authentication__Google__ClientSecret: ${GOOGLE_CLIENT_SECRET:-}
+      Authentication__Facebook__ClientId: ${FACEBOOK_CLIENT_ID:-}
+      Authentication__Facebook__ClientSecret: ${FACEBOOK_CLIENT_SECRET:-}
+      Authentication__Microsoft__ClientId: ${MICROSOFT_CLIENT_ID:-}
+      Authentication__Microsoft__ClientSecret: ${MICROSOFT_CLIENT_SECRET:-}
+      Authentication__Apple__ClientId: ${APPLE_CLIENT_ID:-}
+      Authentication__Apple__TeamId: ${APPLE_TEAM_ID:-}
+      Authentication__Apple__KeyId: ${APPLE_KEY_ID:-}
+      Authentication__Apple__PrivateKey: ${APPLE_PRIVATE_KEY:-}
+      Email__From: ${SMTP_FROM:-}
+      Email__Smtp__Host: ${SMTP_HOST:-}
+      Email__Smtp__Port: ${SMTP_PORT:-587}
+      Email__Smtp__EnableSsl: ${SMTP_ENABLE_SSL:-true}
+      Email__Smtp__Username: ${SMTP_USERNAME:-}
+      Email__Smtp__Password: ${SMTP_PASSWORD:-}
+      Ai__ApiKey: ${OPENAI_API_KEY:-}
+      Ai__Model: ${AI_MODEL:-gpt-5-mini}
+      Ai__MaxOutputTokens: ${AI_MAX_OUTPUT_TOKENS:-4000}
+      Ai__SessionDays: ${AI_SESSION_DAYS:-7}
+      Ai__MaxTurns: ${AI_MAX_TURNS:-50}
+      Cors__AllowedOrigins__0: ${PUBLIC_SITE_URL:-https://${SITE_HOST}}
+      ReverseProxy__KnownProxies__0: ${GATEWAY_IP:-172.30.240.2}
+      DataProtection__KeysPath: /app/keys
+      Logging__LogLevel__Default: ${LOG_LEVEL:-Warning}
+      Logging__LogLevel__Microsoft.Hosting.Lifetime: Information
+    volumes:
+      - identity-keys:/app/keys
+    networks: [application]
+    depends_on:
+      postgres: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/127.0.0.1/8080; printf \"GET /health/ready HTTP/1.1\r\nHost: api\r\nConnection: close\r\n\r\n\" >&3; head -n 1 <&3 | grep -q \" 200 \"'"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    restart: unless-stopped
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-WUD2027}
+      POSTGRES_USER: ${POSTGRES_USER:-filharmonia}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}
+      TZ: ${TZ:-Europe/Warsaw}
+    volumes:
+      - production-postgres:/var/lib/postgresql/data
+    networks: [application]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+      interval: 5s
+      timeout: 5s
+      retries: 15
+    restart: unless-stopped
+networks:
+  application:
+    ipam:
+      config:
+        - subnet: ${NETWORK_SUBNET:-172.30.240.0/24}
+          ip_range: ${NETWORK_IP_RANGE:-172.30.240.128/25}
+volumes:
+  production-postgres:
+  identity-keys:
+  caddy-data:
+  caddy-config:

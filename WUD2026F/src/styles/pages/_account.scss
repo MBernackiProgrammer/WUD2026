@@ -1,0 +1,17 @@
+/* pages / account */
+.favorites-section {
+  padding-top: 0;
+}
+.account-info {
+  border-top: 1px solid var(--line);
+  margin-top: 50px;
+  padding-top: 40px;
+}
+.account-info h2 {
+  font-size: 28px;
+}
+.account-info p {
+  max-width: 700px;
+  font-size: 15px;
+  color: var(--muted);
+}

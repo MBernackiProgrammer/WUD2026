@@ -1,0 +1,13 @@
+node_modules
+dist
+.angular
+.git
+*.log
+
+**/.env
+**/.env.*
+**/*.local.json
+**/*.pem
+**/*.p8
+**/*.pfx
+**/*.key

@@ -1,0 +1,410 @@
+<section
+  class="page-intro container"
+  [class.calendar-intro]="isCalendar()"
+  aria-labelledby="repertoire-title"
+>
+  @if (!isCalendar()) {
+    <p class="eyebrow">{{ isEvents() ? 'POZNAJ FILHARMONIĘ' : 'TWOJE SPOTKANIE Z MUZYKĄ' }}</p>
+  }
+  <h1 id="repertoire-title">
+    {{
+      isCalendar()
+        ? 'Kalendarz Filharmonii'
+        : isEvents()
+          ? 'Odkryj więcej w Filharmonii.'
+          : 'Znajdź swój koncert.'
+    }}
+  </h1>
+  @if (!isCalendar()) {
+    <p>
+      {{
+        isEvents()
+          ? 'Zwiedzanie, wystawy, warsztaty i spotkania — poznaj Filharmonię z innej strony.'
+          : 'Wybierz to, co Cię porusza. Resztę zostaw muzyce.'
+      }}
+    </p>
+  }
+</section>
+<section class="container repertoire">
+  @if (!isCalendar()) {
+    <search class="search-field">
+      <app-icon name="search" />
+      <label
+        class="sr-only"
+        for="event-search"
+      >
+        Szukaj wydarzeń
+      </label>
+      <input
+        pInputText
+        id="event-search"
+        type="search"
+        [placeholder]="
+          isEvents()
+            ? 'Zwiedzanie, wystawa, warsztaty lub spotkanie…'
+            : 'Tytuł, kompozytor, sala lub nastrój…'
+        "
+        [ngModel]="query()"
+        (ngModelChange)="change('q', $event)"
+      />
+      @if (query()) {
+        <button
+          pButton
+          class="icon-button"
+          type="button"
+          aria-label="Wyczyść wyszukiwanie"
+          (click)="change('q', '')"
+        >
+          <app-icon name="close" />
+        </button>
+      }
+    </search>
+  }
+  <button
+    pButton
+    class="button outline filter-toggle"
+    (click)="filtersOpen.set(!filtersOpen())"
+    [attr.aria-expanded]="filtersOpen()"
+    type="button"
+  >
+    <app-icon name="filter" />
+    Filtry {{ activeCount() ? '(' + activeCount() + ')' : '' }}
+  </button>
+  <div
+    #repertoireControls
+    class="repertoire-controls"
+    [class.calendar-top-controls]="isCalendar()"
+    role="region"
+    aria-label="Sterowanie repertuarem"
+  >
+    @if (!isCalendar()) {
+      <div
+        class="repertoire-categories"
+        role="group"
+        aria-label="Kategorie wydarzeń"
+      >
+        @for (option of categoryOptions(); track option.value) {
+          <button
+            pButton
+            type="button"
+            class="repertoire-category"
+            [class.selected]="category() === option.value"
+            [attr.aria-pressed]="category() === option.value"
+            (click)="change('category', option.value)"
+          >
+            {{ option.label }}
+          </button>
+        }
+      </div>
+    }
+    <ng-container
+      [ngTemplateOutlet]="monthNavigation"
+      [ngTemplateOutletContext]="{ monthInputId: 'repertoire-month' }"
+    />
+  </div>
+  <ng-template
+    #monthNavigation
+    let-monthInputId="monthInputId"
+  >
+    <div
+      class="month-navigation"
+      role="group"
+      aria-label="Miesiąc wydarzeń"
+    >
+      <button
+        pButton
+        type="button"
+        class="month-arrow"
+        aria-label="Poprzedni miesiąc"
+        (click)="moveMonth(-1)"
+      >
+        <app-icon name="back" />
+        <span class="month-direction-label">Poprzedni</span>
+      </button>
+      <p-datepicker
+        [inputId]="monthInputId"
+        [ngModel]="selectedMonth()"
+        (ngModelChange)="selectMonth($event)"
+        view="month"
+        dateFormat="MM yy"
+        [readonlyInput]="true"
+        ariaLabel="Wybierz miesiąc i rok"
+        appendTo="body"
+        styleClass="repertoire-month-picker"
+      />
+      <button
+        pButton
+        type="button"
+        class="month-arrow"
+        aria-label="Następny miesiąc"
+        (click)="moveMonth(1)"
+      >
+        <span class="month-direction-label">Następny</span>
+        <app-icon name="arrow" />
+      </button>
+    </div>
+  </ng-template>
+  <ng-template
+    #filterFields
+    let-prefix="prefix"
+  >
+    <h2 class="desktop-filter-heading">Dopasuj wydarzenia</h2>
+    <label [attr.for]="prefix + 'period'">Kiedy?</label>
+    <p-select
+      [inputId]="prefix + 'period'"
+      [options]="dateOptions"
+      optionLabel="label"
+      optionValue="value"
+      [ngModel]="period()"
+      (onChange)="change('date', $event.value)"
+      appendTo="body"
+    />
+    @if (period() === 'range') {
+      <label [attr.for]="prefix + 'from'">Od dnia</label>
+      <p-datepicker
+        [inputId]="prefix + 'from'"
+        [ngModel]="dateValue('from')"
+        (ngModelChange)="changeDate('from', $event)"
+        [readonlyInput]="true"
+        [showIcon]="true"
+        [showClear]="true"
+        appendTo="body"
+        dateFormat="dd.mm.yy"
+      />
+      <label [attr.for]="prefix + 'to'">Do dnia</label>
+      <p-datepicker
+        [inputId]="prefix + 'to'"
+        [ngModel]="dateValue('to')"
+        (ngModelChange)="changeDate('to', $event)"
+        [readonlyInput]="true"
+        [showIcon]="true"
+        [showClear]="true"
+        appendTo="body"
+        dateFormat="dd.mm.yy"
+      />
+    }
+    @for (field of extraFields; track field.key) {
+      <label [attr.for]="prefix + field.key">{{ field.label }}</label>
+      <p-select
+        [inputId]="prefix + field.key"
+        [options]="fieldOptions(field.key, field.options)"
+        [ngModel]="extra()[field.key] || null"
+        (ngModelChange)="change(field.key, $event ?? '')"
+        [showClear]="true"
+        [filter]="true"
+        [ariaLabel]="field.label"
+        placeholder="Wszystkie"
+        appendTo="body"
+      />
+    }
+    @for (
+      field of [
+        { key: 'type', label: 'Typ wydarzenia', options: typeOptions },
+        { key: 'status', label: 'Status biletów', options: statusOptions },
+        { key: 'accessibility', label: 'Dostępność', options: accessibilityOptions },
+        { key: 'duration', label: 'Czas trwania', options: durationOptions },
+      ];
+      track field.key
+    ) {
+      <label [attr.for]="prefix + field.key">{{ field.label }}</label>
+      <p-select
+        [inputId]="prefix + field.key"
+        [options]="field.options"
+        optionLabel="label"
+        optionValue="value"
+        [ngModel]="extra()[field.key] || null"
+        (ngModelChange)="change(field.key, $event ?? '')"
+        [showClear]="true"
+        [ariaLabel]="field.label"
+        placeholder="Wszystkie"
+        appendTo="body"
+      />
+    }
+    @if (extra()['duration'] === 'custom') {
+      @for (key of ['durationMin', 'durationMax']; track key) {
+        <label [attr.for]="prefix + key">
+          {{ key === 'durationMin' ? 'Czas od (min)' : 'Czas do (min)' }}
+        </label>
+        <p-inputnumber
+          [inputId]="prefix + key"
+          [min]="0"
+          [max]="1440"
+          [useGrouping]="false"
+          [ngModel]="extra()[key] ? +extra()[key] : null"
+          (ngModelChange)="change(key, $event == null ? '' : $event.toString())"
+        />
+      }
+    }
+    <label [attr.for]="prefix + 'price-min'">Cena od (zł)</label>
+    <p-inputnumber
+      [inputId]="prefix + 'price-min'"
+      [min]="0"
+      [max]="10000"
+      [ngModel]="extra()['priceMin'] ? +extra()['priceMin'] : null"
+      (ngModelChange)="change('priceMin', $event == null ? '' : $event.toString())"
+    />
+    <label [attr.for]="prefix + 'category'">Co Cię interesuje?</label>
+    <p-select
+      [inputId]="prefix + 'category'"
+      [options]="categoryOptions()"
+      optionLabel="label"
+      optionValue="value"
+      [ngModel]="category()"
+      (onChange)="change('category', $event.value)"
+      appendTo="body"
+    />
+    <label [attr.for]="prefix + 'budget'">Cena do (zł, 0 = bezpłatnie)</label>
+    <p-inputnumber
+      [inputId]="prefix + 'budget'"
+      [min]="0"
+      [max]="10000"
+      [ngModel]="budget() === '' ? null : +budget()"
+      (ngModelChange)="change('budget', $event == null ? '' : $event.toString())"
+    />
+    <label [attr.for]="prefix + 'child-age'">Wiek dziecka (opcjonalnie)</label>
+    <p-inputnumber
+      [inputId]="prefix + 'child-age'"
+      [min]="0"
+      [max]="17"
+      [useGrouping]="false"
+      [ngModel]="age() === '' ? null : +age()"
+      (ngModelChange)="change('age', $event == null ? '' : $event.toString())"
+      placeholder="np. 5"
+    />
+    <div class="checkbox-label">
+      <p-checkbox
+        [inputId]="prefix + 'tickets-available'"
+        [binary]="true"
+        [ngModel]="available()"
+        (ngModelChange)="change('available', $event ? '1' : '')"
+      />
+      <label [attr.for]="prefix + 'tickets-available'">Tylko dostępne bilety</label>
+    </div>
+    <button
+      pButton
+      class="text-link"
+      (click)="reset()"
+      type="button"
+    >
+      Wyczyść filtry
+      <app-icon name="close" />
+    </button>
+    <button
+      pButton
+      class="button dark filter-apply"
+      (click)="filtersOpen.set(false)"
+      type="button"
+    >
+      Pokaż {{ visibleEvents().length }} wydarzeń
+      <app-icon />
+    </button>
+  </ng-template>
+  <p-drawer
+    [visible]="filtersOpen()"
+    (visibleChange)="filtersOpen.set($event)"
+    position="bottom"
+    header="Dopasuj repertuar"
+    styleClass="filters-drawer"
+    [style]="{ height: 'auto' }"
+  >
+    <div class="filter-panel">
+      <ng-container
+        [ngTemplateOutlet]="filterFields"
+        [ngTemplateOutletContext]="{ prefix: 'mobile-' }"
+      />
+    </div>
+  </p-drawer>
+  <div class="repertoire-layout">
+    <aside class="filter-panel desktop-filters">
+      <ng-container
+        [ngTemplateOutlet]="filterFields"
+        [ngTemplateOutletContext]="{ prefix: 'desktop-' }"
+      />
+    </aside>
+    <div class="repertoire-results">
+      <h2
+        class="repertoire-month-heading"
+        aria-live="polite"
+      >
+        {{ period() ? 'Wydarzenia w wybranym terminie' : monthHeading() }}
+      </h2>
+      <div class="results-bar">
+        <p role="status">
+          Liczba wydarzeń:
+          <strong>{{ visibleEvents().length }}</strong>
+        </p>
+      </div>
+      @if (isCalendar()) {
+        <div
+          #desktopCalendarControls
+          class="repertoire-controls desktop-calendar-controls"
+          role="region"
+          aria-label="Sterowanie kalendarzem"
+        >
+          <ng-container
+            [ngTemplateOutlet]="monthNavigation"
+            [ngTemplateOutletContext]="{ monthInputId: 'desktop-repertoire-month' }"
+          />
+        </div>
+      }
+      @if (earlierEvents().length) {
+        <div class="earlier-events-control">
+          <button
+            pButton
+            type="button"
+            class="archive-toggle"
+            [attr.aria-expanded]="earlierExpanded()"
+            aria-controls="calendar-event-list"
+            (click)="change('past', earlierExpanded() ? '' : '1')"
+          >
+            <app-icon name="clock" />
+            {{ earlierExpanded() ? 'Ukryj przeszłe wydarzenia' : 'Pokaż przeszłe wydarzenia' }}
+            <span>({{ earlierEvents().length }})</span>
+          </button>
+          @if (!earlierExpanded() && !upcomingEvents().length) {
+            <p>W wybranym terminie są tylko wydarzenia, które już się odbyły.</p>
+          }
+        </div>
+      }
+      <div
+        id="calendar-event-list"
+        class="event-grid repertoire-grid"
+      >
+        @for (event of visibleEvents(); track event.id) {
+          <app-event-card
+            [event]="event"
+            [attr.data-event-id]="event.id"
+            [class.nearest-upcoming]="nearestUpcoming()?.id === event.id"
+          />
+        }
+      </div>
+      @if (!filtered().length) {
+        <div class="empty-state">
+          <app-icon name="search" />
+          <h2>Brak wyników wyszukiwania</h2>
+          <p>
+            Nie ma wydarzeń spełniających wszystkie kryteria. Spróbuj zmienić termin lub zwiększyć
+            budżet.
+          </p>
+          <button
+            pButton
+            class="button outline"
+            type="button"
+            (click)="moveMonth(1)"
+          >
+            Sprawdź kolejny miesiąc
+            <app-icon name="arrow" />
+          </button>
+          <button
+            pButton
+            class="button dark"
+            (click)="reset()"
+            type="button"
+          >
+            {{ isEvents() ? 'Pokaż wszystkie wydarzenia' : 'Pokaż cały repertuar' }}
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+</section>

@@ -1,0 +1,80 @@
+<audio
+  #audio
+  src="/chopin.mp3"
+  preload="metadata"
+  (loadedmetadata)="metadata()"
+  (durationchange)="metadata()"
+  (timeupdate)="update()"
+  (play)="playing.set(true)"
+  (pause)="playing.set(false)"
+  (ended)="playing.set(false)"
+  (error)="failed.set(true)"
+></audio>
+<div
+  class="wave-player"
+  role="group"
+  aria-label="Odtwarzacz nagrania Chopina"
+>
+  <button
+    class="wave-play"
+    type="button"
+    (click)="toggle()"
+    [disabled]="loading()"
+    [attr.aria-label]="playing() ? 'Wstrzymaj nagranie Chopina' : 'Odtwórz nagranie Chopina'"
+  >
+    <app-icon [name]="playing() ? 'pause' : 'play'" />
+  </button>
+  <div class="wave-content">
+    <div class="wave-heading">
+      <span>Posłuchaj · Chopin</span>
+      <span class="wave-time">{{ stamp(current()) }} / {{ stamp(duration()) }}</span>
+    </div>
+    <div class="wave-track">
+      @if (peaks().length) {
+        <svg
+          class="waveform"
+          viewBox="0 0 640 64"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
+          @for (peak of peaks(); track $index) {
+            <rect
+              [attr.x]="$index * 4"
+              [attr.y]="32 - peak * 30"
+              width="2.5"
+              [attr.height]="peak * 60"
+              rx="0.8"
+              [class.played]="($index / peaks().length) * 100 < progress()"
+            />
+          }
+        </svg>
+      } @else {
+        <div
+          class="wave-fallback"
+          aria-hidden="true"
+        >
+          <span [style.width.%]="progress()"></span>
+        </div>
+      }
+      <input
+        type="range"
+        min="0"
+        [max]="duration() || 0"
+        step="0.1"
+        [value]="current()"
+        [disabled]="!duration()"
+        (input)="seek($event)"
+        aria-label="Przewiń nagranie Chopina"
+        [attr.aria-valuetext]="stamp(current()) + ' z ' + stamp(duration())"
+      />
+    </div>
+  </div>
+</div>
+@if (failed()) {
+  <p
+    class="wave-error"
+    role="status"
+  >
+    Nie udało się odtworzyć nagrania. Spróbuj ponownie.
+  </p>
+}

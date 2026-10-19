@@ -1,0 +1,319 @@
+@if (content.preview()) {
+  <aside
+    class="hero-preview-notice"
+    role="status"
+  >
+    @if (content.failed()) {
+      Nie udało się pobrać wersji roboczej. Sprawdź połączenie z API.
+    } @else {
+      Podgląd zapisanej wersji roboczej — te zmiany nie są jeszcze opublikowane.
+    }
+    <a routerLink="/">Zamknij podgląd</a>
+  </aside>
+}
+<section
+  class="hero"
+  aria-labelledby="home-title"
+>
+  <video
+    #heroVideo
+    class="hero-image"
+    src="/FIlharmoniaV3.mp4"
+    [poster]="hero().imageUrl"
+    autoplay
+    muted
+    [muted]="true"
+    [controls]="false"
+    disablepictureinpicture
+    disableremoteplayback
+    loop
+    playsinline
+    preload="auto"
+    aria-hidden="true"
+    tabindex="-1"
+  ></video>
+  <div class="hero-shade"></div>
+  <div class="hero-content">
+    <h1 id="home-title">
+      {{ hero().title }}
+      <br />
+      <span>{{ hero().highlightedTitle }}</span>
+    </h1>
+    <p class="hero-description hero-copy">
+      {{ hero().description }}
+    </p>
+    <div class="hero-buttons">
+      <a
+        pButton
+        class="button gold"
+        [routerLink]="hero().primaryHref"
+      >
+        {{ hero().primaryLabel }}
+        <app-icon name="arrow" />
+      </a>
+      <button
+        pButton
+        type="button"
+        class="button glass"
+        (click)="assistantDialog.open()"
+      >
+        <app-icon name="spark" />
+        {{ hero().secondaryLabel }}
+      </button>
+    </div>
+  </div>
+</section>
+<div class="home-browse container">
+  @if (account.user()) {
+    @if (discovery.exampleTicket(); as ticket) {
+      <section
+        class="home-ticket"
+        aria-label="Twoje bilety — przykład"
+      >
+        <app-ticket-preview [event]="ticket" />
+      </section>
+    }
+  }
+  <section
+    class="home-personal"
+    [attr.aria-labelledby]="
+      account.user() && discovery.personalized().length ? null : 'home-personal-title'
+    "
+    [attr.aria-label]="account.user() && discovery.personalized().length ? 'Dla Ciebie' : null"
+  >
+    @if (!(account.user() && discovery.personalized().length)) {
+      <header class="home-section-heading">
+        <div>
+          <p class="eyebrow">{{ account.user() ? 'TWÓJ MUZYCZNY ŚWIAT' : 'DOBRZE, ŻE JESTEŚ' }}</p>
+          <h2 id="home-personal-title">
+            {{ account.user() ? 'Dla Ciebie' : 'Od czego zaczniemy?' }}
+          </h2>
+        </div>
+        @if (account.user()) {
+          <a
+            class="text-link"
+            routerLink="/konto"
+            [queryParams]="{ tab: 'favorites' }"
+          >
+            Twoje ulubione
+            <app-icon name="heart" />
+          </a>
+        }
+      </header>
+    }
+    @if (account.user() && discovery.personalized().length) {
+      <app-event-rail
+        title="Dla Ciebie"
+        description="Na podstawie Twoich ulubionych i oglądanych wydarzeń."
+        [events]="discovery.personalized()"
+      >
+        <a
+          rail-action
+          class="text-link"
+          routerLink="/konto"
+          [queryParams]="{ tab: 'favorites' }"
+        >
+          Twoje ulubione
+          <app-icon name="heart" />
+        </a>
+      </app-event-rail>
+    } @else {
+      @if (account.user()) {
+        <p class="home-guidance">
+          Zapisuj wydarzenia serduszkiem i poznawaj program — tutaj pojawią się propozycje bliskie
+          Twoim zainteresowaniom.
+        </p>
+      }
+      <div
+        class="home-shortcuts"
+        aria-label="Pomysły na wizytę"
+      >
+        <button
+          type="button"
+          class="home-shortcut shortcut-ai"
+          (click)="assistantDialog.open()"
+        >
+          <app-icon name="spark" />
+          <span>
+            <strong>Pomóż mi wybrać</strong>
+            <small>Porozmawiaj z SymfonIA</small>
+          </span>
+          <app-icon name="arrow" />
+        </button>
+        <a
+          class="home-shortcut"
+          routerLink="/kalendarz"
+          [queryParams]="{ type: 'concert' }"
+        >
+          <app-icon name="music" />
+          <span>
+            <strong>Zobacz koncerty</strong>
+            <small>Znajdź swoje brzmienie</small>
+          </span>
+          <app-icon name="arrow" />
+        </a>
+        <a
+          class="home-shortcut"
+          routerLink="/kalendarz"
+          [queryParams]="{ type: 'festival' }"
+        >
+          <app-icon name="calendar" />
+          <span>
+            <strong>Zobacz festiwale</strong>
+            <small>Więcej muzyki, więcej odkryć</small>
+          </span>
+          <app-icon name="arrow" />
+        </a>
+        <a
+          class="home-shortcut"
+          routerLink="/kalendarz"
+          [queryParams]="{ audience: 'Rodziny' }"
+        >
+          <app-icon name="user" />
+          <span>
+            <strong>Dla dzieci i rodzin</strong>
+            <small>Wspólne pierwsze zachwyty</small>
+          </span>
+          <app-icon name="arrow" />
+        </a>
+      </div>
+    }
+  </section>
+  @for (row of rows(); track row.title) {
+    <app-event-rail
+      [title]="row.title"
+      [description]="row.description"
+      [events]="row.events"
+      [loading]="store.eventsLoading()"
+    />
+  }
+  <section
+    class="home-discover"
+    aria-labelledby="home-discover-title"
+  >
+    <header class="home-section-heading">
+      <div>
+        <p class="eyebrow">WIĘCEJ NIŻ KONCERTY</p>
+        <h2 id="home-discover-title">Odkryj Filharmonię</h2>
+      </div>
+      <a
+        class="text-link"
+        routerLink="/odkryj"
+      >
+        Poznaj nas
+        <app-icon name="arrow" />
+      </a>
+    </header>
+    <div
+      class="home-discover-track"
+      tabindex="0"
+      aria-label="Przewijana lista: Odkryj Filharmonię"
+    >
+      <a
+        class="home-discover-card"
+        routerLink="/odkryj"
+        fragment="budynek"
+      >
+        <img
+          src="/images/building-3.jpg"
+          alt="Biała bryła Filharmonii"
+          loading="lazy"
+          width="640"
+          height="420"
+        />
+        <div>
+          <span>ARCHITEKTURA</span>
+          <h3>Budynek, który zachwyca</h3>
+          <app-icon name="arrow" />
+        </div>
+      </a>
+      <a
+        class="home-discover-card"
+        routerLink="/odkryj"
+        fragment="orkiestra"
+      >
+        <img
+          src="/images/building-28.jpg"
+          alt="Sala Symfoniczna"
+          loading="lazy"
+          width="640"
+          height="420"
+        />
+        <div>
+          <span>LUDZIE I MUZYKA</span>
+          <h3>Poznaj naszą orkiestrę</h3>
+          <app-icon name="arrow" />
+        </div>
+      </a>
+      <a
+        class="home-discover-card"
+        routerLink="/kalendarz"
+        [queryParams]="{ category: 'Wystawy' }"
+      >
+        <img
+          src="/images/building-5.jpg"
+          alt="Jasne wnętrze Filharmonii"
+          loading="lazy"
+          width="640"
+          height="420"
+        />
+        <div>
+          <span>SZTUKA</span>
+          <h3>Spotkajmy się w galerii</h3>
+          <app-icon name="arrow" />
+        </div>
+      </a>
+      <a
+        class="home-discover-card"
+        routerLink="/kalendarz"
+        [queryParams]="{ category: 'Zwiedzanie' }"
+      >
+        <img
+          src="/images/building-41.jpg"
+          alt="Wnętrze budynku"
+          loading="lazy"
+          width="640"
+          height="420"
+        />
+        <div>
+          <span>ZWIEDZANIE</span>
+          <h3>Zajrzyj za kulisy</h3>
+          <app-icon name="arrow" />
+        </div>
+      </a>
+      <a
+        class="home-discover-card"
+        routerLink="/edukacja"
+      >
+        <img
+          src="/images/building-3.jpg"
+          alt="Filharmonia Szczecińska"
+          loading="lazy"
+          width="640"
+          height="420"
+        />
+        <div>
+          <span>DLA EDUKACJI</span>
+          <h3>Klasa pełna muzyki</h3>
+          <app-icon name="arrow" />
+        </div>
+      </a>
+    </div>
+  </section>
+  <section class="home-visit">
+    <div>
+      <p class="eyebrow">ZAPLANUJ WIZYTĘ</p>
+      <h2>Do zobaczenia przy Małopolskiej.</h2>
+      <p>Dojazd, dostępność i wszystko, co warto wiedzieć przed wyjściem.</p>
+    </div>
+    <a
+      class="button outline"
+      href="https://www.google.com/maps/dir/?api=1&destination=Filharmonia+im.+Mieczys%C5%82awa+Kar%C5%82owicza,+Ma%C5%82opolska+48,+Szczecin"
+      target="_blank"
+      rel="noopener"
+    >
+      Jak do nas trafić
+      <app-icon name="pin" />
+    </a>
+  </section>
+</div>

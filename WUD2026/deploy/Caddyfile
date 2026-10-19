@@ -1,0 +1,21 @@
+{$SITE_ADDRESS} {
+    encode zstd gzip
+    header {
+        X-Content-Type-Options nosniff
+        Referrer-Policy strict-origin-when-cross-origin
+        X-Frame-Options SAMEORIGIN
+        Strict-Transport-Security "max-age=15552000"
+        -Server
+    }
+    @api path /api /api/* /signin-google /signin-facebook /signin-apple /signin-microsoft
+    handle @api {
+        reverse_proxy api:8080
+    }
+    redir /admin /admin/ 308
+    handle /admin/* {
+        reverse_proxy admin:8080
+    }
+    handle {
+        reverse_proxy frontend:4000
+    }
+}

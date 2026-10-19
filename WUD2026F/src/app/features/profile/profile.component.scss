@@ -1,0 +1,149 @@
+:host {
+  display: block;
+}
+.artist-name {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.artist-name .artist-avatar {
+  display: grid;
+  place-items: center;
+  width: clamp(56px, 5vw, 72px);
+  height: clamp(56px, 5vw, 72px);
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #f2eee4;
+  border: 1px solid #ded3b6;
+  color: var(--gold-dark);
+}
+.artist-avatar svg,
+.artist-avatar app-icon {
+  width: 60%;
+  height: 60%;
+}
+.artist-name span {
+  min-width: 0;
+}
+.artist-profile-header {
+  display: flex;
+  gap: 40px;
+  align-items: center;
+  padding-bottom: 40px;
+  border-bottom: 1px solid var(--line);
+}
+.artist-profile-header figure {
+  margin: 0;
+  flex: 0 0 240px;
+}
+.artist-profile-photo {
+  width: 240px;
+  height: 280px;
+  object-fit: cover;
+  display: block;
+}
+.artist-profile-header figcaption {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.5;
+  margin-top: 8px;
+}
+.artist-profile-header h1 {
+  font-size: clamp(32px, 4vw, 58px);
+  line-height: 1.12;
+  margin: 12px 0 20px;
+  overflow-wrap: anywhere;
+}
+.artist-profile-roles {
+  color: var(--muted);
+  font-size: 18px;
+}
+.artist-biography {
+  max-width: 820px;
+  padding-block: 40px;
+}
+.artist-biography h2,
+.artist-events h2 {
+  font-size: clamp(26px, 3vw, 38px);
+  font-weight: 500;
+  margin: 0 0 24px;
+}
+.artist-biography p {
+  line-height: 1.85;
+  font-size: 17px;
+}
+.artist-source {
+  font-size: 13px !important;
+  color: var(--muted);
+  margin-top: 24px;
+}
+.artist-source a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.artist-events {
+  border-top: 1px solid var(--line);
+  padding-top: 40px;
+  scroll-margin-top: calc(
+    var(--accessibility-bar-height, 44px) + var(--site-header-height, 76px) + 24px
+  );
+}
+.artist-events-intro {
+  color: var(--muted);
+  margin-bottom: 28px;
+}
+.artist-empty {
+  background: var(--warm);
+  padding: 24px;
+  margin-bottom: 24px;
+}
+.text-link {
+  gap: 12px;
+}
+.artist-profile-header a:focus-visible {
+  outline: 3px solid var(--gold-dark);
+  outline-offset: 5px;
+}
+@media (max-width: 600px) {
+  .artist-profile-header {
+    align-items: flex-start;
+    gap: 24px;
+    flex-direction: column;
+  }
+  .artist-profile-header figure {
+    flex: none;
+  }
+  .artist-profile-photo {
+    width: 120px;
+    height: 140px;
+  }
+  .artist-profile-header figcaption {
+    max-width: 240px;
+  }
+  .artist-biography {
+    padding-block: 28px;
+  }
+  .artist-events {
+    scroll-margin-top: calc(var(--accessibility-bar-height, 44px) + 20px);
+  }
+}
+
+.artist-favorite {
+  min-height: 44px;
+  padding: 12px 18px;
+  gap: 10px;
+  font-size: 14px;
+  margin: 8px 0 16px;
+}
+.artist-favorite app-icon {
+  width: 20px;
+  height: 20px;
+}
+.artist-favorite[aria-pressed='true'] {
+  background: var(--warm);
+  border-color: var(--gold-dark);
+}
+.artist-favorite-login {
+  font-size: 13px;
+  margin-bottom: 16px;
+}

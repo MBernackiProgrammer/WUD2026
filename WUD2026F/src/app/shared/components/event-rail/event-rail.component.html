@@ -1,0 +1,140 @@
+<section
+  class="event-rail"
+  [attr.aria-label]="title"
+  [attr.aria-busy]="loading"
+>
+  <header class="rail-heading">
+    <div>
+      <h2>{{ title }}</h2>
+      @if (description) {
+        <p>{{ description }}</p>
+      }
+    </div>
+    <ng-content select="[rail-action]" />
+    @if (canScrollBack() || canScrollForward()) {
+      <div class="rail-arrows">
+        @if (canScrollBack()) {
+          <button
+            type="button"
+            [attr.aria-label]="'Poprzednie: ' + title"
+            (click)="scroll(track, -1)"
+          >
+            <app-icon name="back" />
+          </button>
+        }
+        @if (canScrollForward()) {
+          <button
+            type="button"
+            [attr.aria-label]="'Następne: ' + title"
+            (click)="scroll(track, 1)"
+          >
+            <app-icon name="arrow" />
+          </button>
+        }
+      </div>
+    }
+  </header>
+  <div
+    class="rail-viewport"
+    [class.has-more]="canScrollForward()"
+  >
+    <div
+      #track
+      class="rail-track"
+      tabindex="0"
+      (scroll)="updateNavigation()"
+      [attr.aria-label]="'Przewijana lista: ' + title"
+    >
+      @for (event of events; track event.id) {
+        @let tickets = ticketState(event);
+        <article class="rail-card">
+          <a
+            class="rail-photo"
+            [routerLink]="['/wydarzenie', event.id]"
+            tabindex="-1"
+            aria-hidden="true"
+          >
+            <img
+              [src]="'/images/' + event.image"
+              alt=""
+              width="640"
+              height="420"
+              loading="lazy"
+            />
+          </a>
+          @if (store.canFavorite()) {
+            <button
+              class="rail-favorite"
+              type="button"
+              [disabled]="store.savingFavorite()"
+              [attr.aria-label]="
+                (store.favorites().includes(event.id) ? 'Usuń z ulubionych: ' : 'Zapisz: ') +
+                event.title
+              "
+              [attr.aria-pressed]="store.favorites().includes(event.id)"
+              (click)="store.toggleFavorite(event.id)"
+            >
+              <app-icon name="heart" />
+            </button>
+          }
+          <div class="rail-copy">
+            <p class="rail-category">{{ event.category }}</p>
+            <h3>
+              <a [routerLink]="['/wydarzenie', event.id]">{{ event.title }}</a>
+            </h3>
+            <p class="rail-date">{{ event.date | date: 'dd.MM.yyyy' }} · {{ event.time }}</p>
+            <p class="rail-room">{{ event.room }}</p>
+            <div class="rail-footer">
+              <span>
+                {{
+                  event.price === null
+                    ? tickets.label
+                    : event.price === 0
+                      ? 'Wstęp wolny'
+                      : 'od ' + event.price + ' zł'
+                }}
+              </span>
+              <a
+                [routerLink]="['/wydarzenie', event.id]"
+                [attr.aria-label]="'Więcej informacji: ' + event.title"
+              >
+                <app-icon name="arrow" />
+              </a>
+            </div>
+            @if (!tickets.canBuy && event.price !== null) {
+              <p class="rail-ticket-status">{{ tickets.label }}</p>
+            }
+            @if (tickets.canBuy) {
+              <a
+                class="rail-ticket-button"
+                [href]="tickets.url"
+                [attr.aria-label]="'Kup bilet: ' + event.title"
+              >
+                KUP BILET
+                <app-icon name="ticket" />
+              </a>
+            } @else {
+              <button
+                class="rail-ticket-button"
+                type="button"
+                disabled
+                [attr.aria-label]="'Kup bilet: ' + event.title + ' — ' + tickets.label"
+              >
+                KUP BILET
+                <app-icon name="ticket" />
+              </button>
+            }
+          </div>
+        </article>
+      } @empty {
+        <div class="rail-empty">
+          <p>{{ loading ? 'Wczytujemy wydarzenia…' : 'Nie ma teraz wydarzeń w tej sekcji.' }}</p>
+          <a routerLink="/kalendarz">
+            Sprawdź kalendarz
+            <app-icon name="arrow" />
+          </a>
+        </div>
+      }
+    </div>
+  </div>
+</section>

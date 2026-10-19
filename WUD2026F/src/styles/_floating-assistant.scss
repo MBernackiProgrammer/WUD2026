@@ -1,0 +1,93 @@
+/* Named assistant action, above the bottom navigation on mobile. */
+@media (max-width: 1023px) {
+  body:has(.home-page) .assistant-fab {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 280ms ease, transform 280ms ease, visibility 280ms;
+  }
+  html:not(.home-hero-passed) body:has(.home-page) .assistant-fab {
+    opacity: 0;
+    transform: translateY(6px);
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+.assistant-fab.p-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  right: 20px;
+  bottom: calc(92px + env(safe-area-inset-bottom));
+  width: 58px;
+  height: 58px;
+  min-height: 58px;
+  min-width: 58px;
+  padding: 0;
+  overflow: visible;
+  gap: 0;
+  border: 1px solid var(--gold);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--gold);
+  box-shadow: none;
+  z-index: 35;
+}
+.assistant-fab.p-button:hover {
+  background: transparent;
+  color: var(--gold);
+}
+.assistant-fab::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border: 1px solid var(--gold);
+  border-radius: 50%;
+  background: var(--ink);
+  box-shadow: 0 5px 20px #0003;
+  z-index: 0;
+  pointer-events: none;
+}
+.assistant-fab.p-button:hover::before {
+  background: #30291d;
+}
+.assistant-fab app-icon {
+  position: relative;
+  z-index: 1;
+  width: 25px;
+  height: 25px;
+  color: inherit;
+}
+.assistant-fab-label {
+  position: absolute;
+  top: -1px;
+  bottom: -1px;
+  display: flex;
+  align-items: center;
+  right: calc(100% - 24px);
+  padding: 10px 36px 10px 16px;
+  border: 1px solid var(--gold);
+  border-right: 0;
+  border-radius: 999px 0 0 999px;
+  background: var(--gold);
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  white-space: nowrap;
+  z-index: -1;
+  animation: none;
+  transition: none;
+}
+.assistant-label-hidden .assistant-fab-label {
+  visibility: hidden;
+}
+@media (min-width: 1024px) {
+  .assistant-fab.p-button {
+    right: 28px;
+    bottom: 28px;
+    width: 60px;
+    height: 60px;
+    min-height: 60px;
+  }
+}

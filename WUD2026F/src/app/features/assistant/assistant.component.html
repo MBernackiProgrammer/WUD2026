@@ -1,0 +1,17 @@
+<section
+  class="container assistant-page"
+  aria-labelledby="assistant-title"
+>
+  <p class="eyebrow">MUZYKA · SZTUKA · FILHARMONIA W SZCZECINIE</p>
+  <h1 id="assistant-title">{{ content.title }}</h1>
+  <p class="lead">{{ content.welcome }}</p>
+  <button
+    pButton
+    type="button"
+    class="button dark"
+    (click)="dialog.open()"
+  >
+    Otwórz rozmowę
+    <app-icon name="spark" />
+  </button>
+</section>

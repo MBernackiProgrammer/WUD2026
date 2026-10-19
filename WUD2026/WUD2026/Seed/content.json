@@ -1,0 +1,202 @@
+{
+  "revision": 1,
+  "updatedAt": "2026-10-17T18:00:00Z",
+  "draftHero": {
+    "eyebrow": "FILHARMONIA W SZCZECINIE · SEZON 2026/27",
+    "title": "Poczuj więcej.",
+    "highlightedTitle": "Usłysz na żywo.",
+    "description": "Są emocje, których nie da się opowiedzieć.\nOdkryj je w Filharmonii. To również Twoje miejsce.",
+    "imageUrl": "/images/building-28-large.webp",
+    "imageAlt": "Złote, geometryczne wnętrze Sali Symfonicznej Filharmonii w Szczecinie",
+    "primaryLabel": "Odkryj repertuar",
+    "primaryHref": "/repertuar",
+    "secondaryLabel": "Pomóż mi wybrać",
+    "secondaryHref": "/dla-ciebie",
+    "sideText": "PRZESTRZEŃ DLA TWOICH EMOCJI",
+    "caption": "SALA SYMFONICZNA / SZCZECIN",
+    "featuredEventId": "wieczor-z-beethovenem",
+    "featuredLabel": "PROPOZYCJA DEMONSTRACYJNA"
+  },
+  "publishedHero": {
+    "eyebrow": "FILHARMONIA W SZCZECINIE · SEZON 2026/27",
+    "title": "Poczuj więcej.",
+    "highlightedTitle": "Usłysz na żywo.",
+    "description": "Są emocje, których nie da się opowiedzieć.\nOdkryj je w Filharmonii. To również Twoje miejsce.",
+    "imageUrl": "/images/building-28-large.webp",
+    "imageAlt": "Złote, geometryczne wnętrze Sali Symfonicznej Filharmonii w Szczecinie",
+    "primaryLabel": "Odkryj repertuar",
+    "primaryHref": "/repertuar",
+    "secondaryLabel": "Pomóż mi wybrać",
+    "secondaryHref": "/dla-ciebie",
+    "sideText": "PRZESTRZEŃ DLA TWOICH EMOCJI",
+    "caption": "SALA SYMFONICZNA / SZCZECIN",
+    "featuredEventId": "wieczor-z-beethovenem",
+    "featuredLabel": "PROPOZYCJA DEMONSTRACYJNA"
+  },
+  "scheduledHero": null,
+  "heroPublishAt": null,
+  "events": [
+    {
+      "id": "wieczor-z-beethovenem",
+      "title": "Wieczór z Beethovenem",
+      "subtitle": "Wielkie emocje. Wielka symfonia.",
+      "category": "Symfoniczne",
+      "date": "2026-10-23",
+      "time": "19:00",
+      "duration": 110,
+      "room": "Sala Symfoniczna",
+      "price": 55,
+      "image": "building-28.jpg",
+      "mood": "Wzruszenie",
+      "audience": "Dorośli",
+      "age": 12,
+      "description": "Pozwól muzyce opowiedzieć historię, do której nie potrzeba słów. Od pierwszych, rozpoznawalnych dźwięków po finał pełen energii — to dobry początek Twojej przygody z orkiestrą.",
+      "program": [
+        "Ludwig van Beethoven · Uwertura Egmont",
+        "Ludwig van Beethoven · V Symfonia c-moll"
+      ],
+      "artists": "Orkiestra Symfoniczna Filharmonii w Szczecinie",
+      "status": "available",
+      "publicationState": "published",
+      "publishAt": null,
+      "tags": [
+        "repertoire"
+      ]
+    },
+    {
+      "id": "male-wielkie-dzwieki",
+      "title": "Małe wielkie dźwięki",
+      "subtitle": "Muzyczna przygoda dla całej rodziny.",
+      "category": "Dla rodzin",
+      "date": "2026-10-24",
+      "time": "11:00",
+      "duration": 45,
+      "room": "Sala Kameralna",
+      "price": 25,
+      "image": "building-5.jpg",
+      "mood": "Odkrywanie",
+      "audience": "Rodziny",
+      "age": 5,
+      "description": "Jak rozmawiają instrumenty? Wspólnie odkryjemy ich głosy podczas krótkiego, przyjaznego spotkania z muzyką. Propozycja dla dzieci od 5 lat i ich opiekunów.",
+      "program": [
+        "Poznajemy instrumenty orkiestry",
+        "Muzyczne zagadki i wspólne słuchanie"
+      ],
+      "artists": "Kameraliści Filharmonii — obsada demonstracyjna",
+      "status": "available",
+      "publicationState": "published",
+      "publishAt": null,
+      "tags": [
+        "repertoire"
+      ]
+    },
+    {
+      "id": "jazz-po-zmroku",
+      "title": "Jazz po zmroku",
+      "subtitle": "Improwizacja, która zostaje z Tobą.",
+      "category": "Jazz",
+      "date": "2026-10-30",
+      "time": "20:00",
+      "duration": 80,
+      "room": "Sala Kameralna",
+      "price": 65,
+      "image": "building-41.jpg",
+      "mood": "Relaks",
+      "audience": "Dorośli",
+      "age": 12,
+      "description": "Kameralny wieczór z fortepianem, kontrabasem i perkusją. Znane melodie spotkają się ze swobodną improwizacją. Przyjdź po prostu posłuchać.",
+      "program": [
+        "Standardy jazzowe w autorskich aranżacjach",
+        "Kompozycje własne zespołu"
+      ],
+      "artists": "Trio jazzowe — obsada demonstracyjna",
+      "status": "available",
+      "publicationState": "published",
+      "publishAt": null,
+      "tags": [
+        "repertoire"
+      ]
+    },
+    {
+      "id": "muzyka-filmowa",
+      "title": "Historie zapisane w muzyce",
+      "subtitle": "Wyrusz w podróż śladami filmowych emocji.",
+      "category": "Filmowe",
+      "date": "2026-11-06",
+      "time": "19:00",
+      "duration": 100,
+      "room": "Sala Symfoniczna",
+      "price": 75,
+      "image": "building-28.jpg",
+      "mood": "Energia",
+      "audience": "Dorośli",
+      "age": 8,
+      "description": "Wielki ekran ma swój własny język. Odkryj, jak orkiestra buduje napięcie i przenosi nas do innych światów.",
+      "program": [
+        "Orkiestrowe opowieści inspirowane kinem",
+        "Program szczegółowy w przygotowaniu"
+      ],
+      "artists": "Orkiestra Symfoniczna Filharmonii w Szczecinie",
+      "status": "sold-out",
+      "publicationState": "published",
+      "publishAt": null,
+      "tags": [
+        "repertoire"
+      ]
+    },
+    {
+      "id": "odkryj-budynek",
+      "title": "Architektura, która brzmi",
+      "subtitle": "Zajrzyj za kulisy Filharmonii.",
+      "category": "Zwiedzanie",
+      "date": "2026-10-23",
+      "time": "15:00",
+      "duration": 60,
+      "room": "Foyer",
+      "price": 15,
+      "image": "building-3.jpg",
+      "mood": "Odkrywanie",
+      "audience": "Wszyscy",
+      "age": 0,
+      "description": "Od białego foyer do złotej sali. Poznaj przestrzeń zaprojektowaną przez studio Barozzi/Veiga i odkryj, jak architektura spotyka się z dźwiękiem.",
+      "program": [
+        "Foyer i architektura budynku",
+        "Sale koncertowe — trasa zależy od ich dostępności"
+      ],
+      "artists": "Zwiedzanie z przewodnikiem · język polski",
+      "status": "unknown",
+      "publicationState": "published",
+      "publishAt": null,
+      "tags": [
+        "events"
+      ]
+    },
+    {
+      "id": "kameralnie",
+      "title": "Bliżej muzyki",
+      "subtitle": "Kwartet smyczkowy. Czas tylko dla Ciebie.",
+      "category": "Kameralne",
+      "date": "2026-11-08",
+      "time": "18:00",
+      "duration": 70,
+      "room": "Sala Kameralna",
+      "price": 35,
+      "image": "building-7.jpg",
+      "mood": "Relaks",
+      "audience": "Dorośli",
+      "age": 10,
+      "description": "Cztery instrumenty i nieskończenie wiele odcieni. Kameralne spotkanie pozwala usłyszeć każdy detal i na chwilę zwolnić.",
+      "program": [
+        "Joseph Haydn · wybrane części kwartetów smyczkowych",
+        "Rozmowa o muzyce z wykonawcami"
+      ],
+      "artists": "Kwartet smyczkowy — obsada demonstracyjna",
+      "status": "available",
+      "publicationState": "published",
+      "publishAt": null,
+      "tags": [
+        "repertoire"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,320 @@
+<a
+  class="skip-link"
+  href="#main"
+  (click)="skipToContent($event)"
+>
+  Przejdź do treści
+</a>
+<div class="utility-bar accessibility-bar">
+  <div class="utility-bar-inner">
+    <nav
+      class="accessibility-nav"
+      aria-label="Ułatwienia dostępu"
+    >
+      <a
+        class="utility-skip"
+        href="#main"
+        (click)="skipToContent($event)"
+      >
+        Przejdź do treści
+      </a>
+      <button
+        type="button"
+        aria-label="Zmniejsz tekst"
+        title="Zmniejsz tekst"
+        [disabled]="readingSize() === 0"
+        (click)="changeReadingSize(-1)"
+      >
+        A−
+      </button>
+      <button
+        type="button"
+        aria-label="Powiększ tekst"
+        title="Powiększ tekst"
+        [disabled]="readingSize() === 2"
+        (click)="changeReadingSize(1)"
+      >
+        A+
+      </button>
+      <button
+        type="button"
+        aria-label="Zwiększony kontrast"
+        title="Zwiększony kontrast"
+        [attr.aria-pressed]="highContrast()"
+        (click)="toggleContrast()"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <circle
+            cx="12"
+            cy="12"
+            r="9"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+          />
+          <path
+            d="M12 3a9 9 0 0 1 0 18Z"
+            fill="currentColor"
+          />
+        </svg>
+      </button>
+      <button
+        type="button"
+        aria-label="Ogranicz animacje"
+        title="Ogranicz animacje"
+        [attr.aria-pressed]="reducedMotion()"
+        (click)="toggleMotion()"
+      >
+        <app-icon name="pause" />
+      </button>
+    </nav>
+  </div>
+</div>
+<div class="utility-bar audience-bar">
+  <div class="utility-bar-inner">
+    <nav
+      class="audience-nav"
+      aria-label="Oferta Filharmonii"
+    >
+      <a routerLink="/">Dla wszystkich</a>
+      <a routerLink="/edukacja">Dla edukacji</a>
+      <a routerLink="/biznes">Dla biznesu</a>
+    </nav>
+  </div>
+</div>
+<header class="site-header">
+  <div class="header-inner">
+    <a
+      class="brand"
+      routerLink="/"
+      aria-label="Filharmonia w Szczecinie — strona główna"
+    >
+      <img
+        class="header-logo"
+        src="/images/filharmonia-logo.png"
+        alt="Filharmonia Szczecin"
+        width="1001"
+        height="1266"
+        fetchpriority="high"
+      />
+    </a>
+    <nav
+      class="desktop-nav"
+      aria-label="Nawigacja główna"
+    >
+      <a
+        routerLink="/"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        ariaCurrentWhenActive="page"
+      >
+        <span>Główna</span>
+      </a>
+      <a
+        routerLink="/szukaj"
+        routerLinkActive="active"
+        ariaCurrentWhenActive="page"
+      >
+        <span>Wyszukaj</span>
+      </a>
+      <a
+        class="calendar-nav"
+        routerLink="/kalendarz"
+        [class.active]="!!activeCatalogSection()"
+        [attr.aria-current]="activeCatalogSection() ? 'page' : null"
+      >
+        <span>Kalendarz</span>
+      </a>
+      <a
+        routerLink="/odkryj"
+        routerLinkActive="active"
+        ariaCurrentWhenActive="page"
+      >
+        <span>O Filharmonii</span>
+      </a>
+      <a
+        routerLink="/konto"
+        routerLinkActive="active"
+        ariaCurrentWhenActive="page"
+      >
+        <span>Konto</span>
+      </a>
+    </nav>
+    <div class="header-actions">
+      <label
+        class="sr-only"
+        for="site-language"
+      >
+        Wybierz język
+      </label>
+      <p-select
+        inputId="site-language"
+        styleClass="language-picker"
+        [options]="languages"
+        optionLabel="label"
+        optionValue="value"
+        [ngModel]="language()"
+        (onChange)="selectLanguage($event.value)"
+        appendTo="body"
+        ariaLabel="Wybierz język"
+      />
+    </div>
+  </div>
+</header>
+<main
+  id="main"
+  tabindex="-1"
+>
+  @if (breadcrumbs().length) {
+    <nav
+      class="container breadcrumbs"
+      aria-label="Ścieżka okruszkowa"
+    >
+      <ol>
+        @for (crumb of breadcrumbs(); track $index; let last = $last) {
+          <li>
+            @if ($index > 0) {
+              <span
+                class="breadcrumb-separator"
+                aria-hidden="true"
+              >
+                /
+              </span>
+            }
+            @if (!last && crumb.url) {
+              <a [routerLink]="crumb.url">{{ crumb.label }}</a>
+            } @else {
+              <span aria-current="page">{{ crumb.label }}</span>
+            }
+          </li>
+        }
+      </ol>
+    </nav>
+  }
+  <router-outlet />
+</main>
+<footer class="site-footer">
+  <div class="footer-top">
+    <a
+      class="footer-wordmark"
+      routerLink="/"
+      aria-label="Filharmonia w Szczecinie — strona główna"
+    >
+      <img
+        class="footer-logo"
+        src="/images/filharmonia-logo.png"
+        alt="Filharmonia Szczecin"
+        width="1001"
+        height="1266"
+        loading="lazy"
+      />
+    </a>
+    <nav
+      class="footer-links"
+      aria-label="Informacje o Filharmonii"
+    >
+      <a routerLink="/biznes">
+        Partnerzy i biznes
+        <app-icon name="arrow" />
+      </a>
+      <a routerLink="/media">
+        Strefa mediów
+        <app-icon name="diagonal" />
+      </a>
+      <a routerLink="/kontakt">
+        Kontakt
+        <app-icon name="diagonal" />
+      </a>
+      <a routerLink="/odkryj">
+        O instytucji
+        <app-icon name="arrow" />
+      </a>
+      <a routerLink="/dostepnosc">
+        Deklaracja dostępności
+        <app-icon name="diagonal" />
+      </a>
+    </nav>
+    <div>
+      <p class="eyebrow">ZNAJDŹ NAS</p>
+      <p>
+        Filharmonia w Szczecinie
+        <br />
+        ul. Małopolska 48
+        <br />
+        70-515 Szczecin
+      </p>
+      <a routerLink="/wizyta">
+        Zaplanuj dojazd
+        <app-icon name="arrow" />
+      </a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Filharmonia w Szczecinie</span>
+    <div>
+      <a
+        href="https://filharmonia.szczecin.pl/polityka_prywatnosci"
+        target="_blank"
+        rel="noopener"
+      >
+        Prywatność
+      </a>
+    </div>
+  </div>
+</footer>
+<app-assistant-window />
+<nav
+  class="bottom-nav"
+  aria-label="Nawigacja dolna"
+>
+  <a
+    routerLink="/"
+    routerLinkActive="active"
+    [routerLinkActiveOptions]="{ exact: true }"
+    ariaCurrentWhenActive="page"
+  >
+    <app-icon name="home" />
+    <span>Główna</span>
+  </a>
+  <a
+    routerLink="/szukaj"
+    routerLinkActive="active"
+    ariaCurrentWhenActive="page"
+  >
+    <app-icon name="search" />
+    <span>Wyszukaj</span>
+  </a>
+  <a
+    class="calendar-nav"
+    routerLink="/kalendarz"
+    [class.active]="!!activeCatalogSection()"
+    [attr.aria-current]="activeCatalogSection() ? 'page' : null"
+  >
+    <app-icon name="calendar" />
+    <span>Kalendarz</span>
+  </a>
+  <a
+    routerLink="/odkryj"
+    routerLinkActive="active"
+    ariaCurrentWhenActive="page"
+  >
+    <app-icon name="music" />
+    <span>O Filharmonii</span>
+  </a>
+  <a
+    routerLink="/konto"
+    routerLinkActive="active"
+    ariaCurrentWhenActive="page"
+  >
+    <app-icon name="user" />
+    <span>Konto</span>
+  </a>
+</nav>
+<p-toast
+  position="bottom-left"
+  styleClass="site-toast"
+  [baseZIndex]="5000"
+/>

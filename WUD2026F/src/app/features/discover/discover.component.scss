@@ -1,0 +1,129 @@
+:host {
+  display: block;
+  padding-bottom: 60px;
+}
+.container {
+  max-width: 1020px;
+}
+.architecture-hero {
+  height: auto;
+  min-height: 0;
+  padding-block: 75px;
+}
+.discover-sections {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-block: 24px;
+  scrollbar-width: thin;
+}
+.discover-sections a {
+  padding: 12px 18px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  white-space: nowrap;
+  font-size: 14px;
+  min-height: 44px;
+}
+.discover-detail {
+  padding-block: 44px;
+  border-top: 1px solid var(--line);
+  scroll-margin-top: 24px;
+}
+.discover-detail > p:not(.eyebrow) {
+  max-width: 75ch;
+  color: var(--muted);
+  font-size: 17px;
+}
+.discover-detail h2 {
+  font-size: clamp(28px, 3vw, 40px);
+  max-width: 26ch;
+}
+.discover-detail .eyebrow {
+  color: var(--gold-dark);
+  font-size: 11px;
+}
+.discover-detail h3 {
+  margin-top: 32px;
+  font-size: 24px;
+}
+.discover-artists {
+  display: grid;
+  gap: 12px;
+}
+.discover-artists a {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px;
+  background: var(--warm);
+  border-radius: 8px;
+  font-size: 15px;
+}
+.discover-artists span {
+  flex: 1;
+}
+.discover-artists small {
+  display: block;
+  margin-top: 5px;
+  color: var(--muted);
+}
+app-icon {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  color: var(--gold-dark);
+}
+.discover-timeline {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 24px;
+}
+.discover-timeline li {
+  display: flex;
+  gap: 24px;
+  align-items: baseline;
+}
+.discover-timeline strong {
+  font-size: 24px;
+  color: var(--gold-dark);
+  min-width: 62px;
+}
+.discover-timeline p {
+  max-width: 65ch;
+  color: var(--muted);
+  font-size: 16px;
+}
+.discover-pair {
+  display: grid;
+  gap: 24px;
+}
+.discover-pair section {
+  padding: 32px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  scroll-margin-top: 24px;
+}
+.discover-pair h2 {
+  font-size: 30px;
+  margin-top: 20px;
+}
+.discover-pair p {
+  color: var(--muted);
+  font-size: 16px;
+}
+.discover-pair .text-link {
+  font-size: 14px;
+  display: flex;
+  margin-top: 16px;
+  min-height: 44px;
+}
+@media (min-width: 768px) {
+  .discover-artists {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .discover-pair {
+    grid-template-columns: 1fr 1fr;
+  }
+}

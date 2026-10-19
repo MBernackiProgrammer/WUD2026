@@ -1,0 +1,689 @@
+<div class="editor-shell">
+  <aside
+    class="editor-sidebar"
+    aria-label="Panel redakcyjny"
+  >
+    <a
+      class="editor-brand"
+      [href]="publicSite"
+      target="_blank"
+      rel="noopener"
+    >
+      <img
+        src="/images/filharmonia-symbol.png"
+        alt=""
+        width="64"
+        height="64"
+      />
+      <span>
+        FILHARMONIA
+        <small>Panel redakcyjny</small>
+      </span>
+    </a>
+    <p class="sidebar-label">ZARZĄDZANIE TREŚCIĄ</p>
+    <nav aria-label="Sekcje panelu">
+      <button
+        pButton
+        type="button"
+        [class.active]="tab() === 'hero'"
+        (click)="tab.set('hero')"
+        [attr.aria-pressed]="tab() === 'hero'"
+      >
+        <app-icon name="spark" />
+        Strona główna / Hero
+      </button>
+      <button
+        pButton
+        type="button"
+        [class.active]="tab() === 'events'"
+        (click)="tab.set('events')"
+        [attr.aria-pressed]="tab() === 'events'"
+      >
+        <app-icon name="calendar" />
+        Wydarzenia
+      </button>
+    </nav>
+    <div class="sidebar-bottom">
+      <span class="gold-dot"></span>
+      Lokalny panel redakcyjny
+      <p>Zmiany publikujesz dopiero wtedy, gdy są gotowe.</p>
+    </div>
+  </aside>
+
+  <main class="editor-main">
+    <header class="editor-topbar">
+      <span>
+        Filharmonia w Szczecinie
+        <span class="breadcrumb-separator">/</span>
+        {{ tab() === 'hero' ? 'Strona główna' : 'Repertuar' }}
+      </span>
+      <a
+        [href]="publicSite"
+        target="_blank"
+        rel="noopener"
+      >
+        Otwórz stronę
+        <app-icon name="diagonal" />
+      </a>
+    </header>
+    <div class="editor-content">
+      <header class="page-heading">
+        <div>
+          <p class="eyebrow">PRZESTRZEŃ DLA DOBREJ TREŚCI</p>
+          <h1>
+            {{
+              tab() === 'hero' ? 'Pierwsze wrażenie. Twoja decyzja.' : 'Zaplanuj kolejne spotkanie.'
+            }}
+          </h1>
+          <p>
+            {{
+              tab() === 'hero'
+                ? 'Edytuj hero strony głównej. Zapisz szkic, sprawdź podgląd i wybierz moment publikacji.'
+                : 'Dodawaj wydarzenia, edytuj repertuar i planuj jego publikację.'
+            }}
+          </p>
+        </div>
+        <button
+          pButton
+          class="button outline"
+          type="button"
+          (click)="load()"
+          [disabled]="loading() || busy()"
+        >
+          Odśwież dane
+        </button>
+      </header>
+      @if (error()) {
+        <div
+          class="editor-error"
+          role="alert"
+        >
+          {{ error() }}
+        </div>
+      }
+      @if (loading()) {
+        <div
+          class="loading-state"
+          role="status"
+        >
+          Wczytywanie treści…
+        </div>
+      } @else {
+        @if (content(); as document) {
+          @if (tab() === 'hero') {
+            <div class="editor-layout">
+              <form
+                id="hero-editor"
+                class="editor-panel"
+                [formGroup]="heroForm"
+                (ngSubmit)="saveHero()"
+              >
+                <header class="panel-heading">
+                  <div>
+                    <h2>Treść hero</h2>
+                    <p>Teksty, fotografia i najważniejsze działania.</p>
+                  </div>
+                  <p-tag [value]="heroForm.dirty ? 'Niezapisane zmiany' : 'Szkic zapisany'" />
+                </header>
+                <fieldset>
+                  <legend>Komunikat i przyciski</legend>
+                  <div class="field-grid">
+                    @for (field of heroFields; track field.name) {
+                      <div
+                        class="field"
+                        [class.wide]="field.multiline"
+                      >
+                        <label [for]="field.name">{{ field.label }}</label>
+                        @if (field.multiline) {
+                          <textarea
+                            pTextarea
+                            [id]="field.name"
+                            [formControlName]="field.name"
+                            [maxlength]="field.maxLength"
+                            rows="4"
+                          ></textarea>
+                        } @else {
+                          <input
+                            pInputText
+                            [id]="field.name"
+                            [formControlName]="field.name"
+                            [maxlength]="field.maxLength"
+                          />
+                        }
+                        @if (field.help) {
+                          <small>{{ field.help }}</small>
+                        }
+                        @if (
+                          heroForm.controls[field.name].touched &&
+                          heroForm.controls[field.name].invalid
+                        ) {
+                          <small class="field-error">
+                            Uzupełnij poprawnie to pole (maks. {{ field.maxLength }} znaków).
+                          </small>
+                        }
+                      </div>
+                    }
+                  </div>
+                </fieldset>
+                <fieldset>
+                  <legend>Fotografia</legend>
+                  <div class="field">
+                    <label for="image-library">Wybierz z biblioteki</label>
+                    <p-select
+                      inputId="image-library"
+                      formControlName="imageUrl"
+                      [options]="images"
+                      optionLabel="label"
+                      optionValue="value"
+                      placeholder="Wybierz fotografię"
+                      appendTo="body"
+                    />
+                  </div>
+                  <div class="field">
+                    <label for="imageUrl">Adres fotografii</label>
+                    <input
+                      pInputText
+                      id="imageUrl"
+                      formControlName="imageUrl"
+                      maxlength="1000"
+                    />
+                    <small>Plik /images/ albo pełny adres HTTPS do własnego zdjęcia.</small>
+                    @if (heroForm.controls.imageUrl.touched && heroForm.controls.imageUrl.invalid) {
+                      <small class="field-error">Podaj plik /images/ lub adres HTTPS.</small>
+                    }
+                  </div>
+                  <div class="field">
+                    <label for="imageAlt">Opis zdjęcia dla czytników ekranu</label>
+                    <input
+                      pInputText
+                      id="imageAlt"
+                      formControlName="imageAlt"
+                      maxlength="250"
+                    />
+                    @if (heroForm.controls.imageAlt.touched && heroForm.controls.imageAlt.invalid) {
+                      <small class="field-error">Dodaj opis fotografii.</small>
+                    }
+                  </div>
+                </fieldset>
+                <fieldset>
+                  <legend>Promowane wydarzenie</legend>
+                  <div class="field">
+                    <label for="featured-event">Wydarzenie w dolnej części hero</label>
+                    <p-select
+                      inputId="featured-event"
+                      formControlName="featuredEventId"
+                      [options]="eventOptions()"
+                      optionLabel="label"
+                      optionValue="value"
+                      [filter]="true"
+                      filterBy="label"
+                      appendTo="body"
+                    />
+                    <small>
+                      Data, godzina, sala i cena pochodzą z danych wydarzenia. Nie trzeba
+                      przepisywać ich tutaj.
+                    </small>
+                  </div>
+                </fieldset>
+                <footer class="form-actions">
+                  <span>
+                    {{
+                      heroForm.dirty ? 'Masz niezapisane zmiany.' : 'Wersja robocza jest zapisana.'
+                    }}
+                  </span>
+                  <button
+                    pButton
+                    class="button dark"
+                    type="submit"
+                    [disabled]="busy() || heroForm.invalid"
+                  >
+                    {{ busy() ? 'Zapisywanie…' : 'Zapisz wersję roboczą' }}
+                  </button>
+                </footer>
+              </form>
+
+              <aside
+                class="editor-preview-column"
+                aria-label="Podgląd i publikacja hero"
+              >
+                <section class="preview-panel">
+                  <header class="preview-heading">
+                    <h2>Podgląd na żywo</h2>
+                    <span>Hero</span>
+                  </header>
+                  <div class="hero-preview">
+                    <img
+                      [src]="previewImage"
+                      [alt]="preview.imageAlt"
+                      (error)="imageFailed.set(true)"
+                    />
+                    <div class="hero-preview-shade"></div>
+                    <div class="hero-preview-content">
+                      <p>{{ preview.eyebrow }}</p>
+                      <h3>
+                        {{ preview.title }}
+                        <br />
+                        <span>{{ preview.highlightedTitle }}</span>
+                      </h3>
+                      <p class="preview-description">{{ preview.description }}</p>
+                      <div class="preview-buttons">
+                        <span>
+                          {{ preview.primaryLabel }}
+                          <app-icon name="arrow" />
+                        </span>
+                        <span>{{ preview.secondaryLabel }}</span>
+                      </div>
+                      @if (previewEvent; as event) {
+                        <div class="preview-event">
+                          <small>{{ preview.featuredLabel }}</small>
+                          <strong>{{ event.title }}</strong>
+                          <span>
+                            {{ event.date | date: 'dd.MM.yyyy' }} · {{ event.time }} ·
+                            {{ event.room }} ·
+                            {{
+                              event.price === null
+                                ? 'Cena do potwierdzenia'
+                                : 'od ' + event.price + ' zł'
+                            }}
+                          </span>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                  @if (imageFailed()) {
+                    <p class="field-error preview-image-error">
+                      Nie udało się wczytać fotografii. Sprawdź jej adres.
+                    </p>
+                  }
+                  <a
+                    class="preview-link"
+                    [href]="publicSite + '/?heroPreview=1'"
+                    target="_blank"
+                    rel="noopener"
+                  >
+                    Podgląd zapisanej wersji na stronie
+                    <app-icon name="diagonal" />
+                  </a>
+                  @if (heroForm.dirty) {
+                    <p class="preview-hint">
+                      Podgląd powyżej pokazuje bieżące zmiany. Przed otwarciem podglądu strony
+                      zapisz szkic.
+                    </p>
+                  }
+                </section>
+                <section class="publish-panel">
+                  <p class="eyebrow">PUBLIKACJA</p>
+                  <h2>Wybierz dobry moment.</h2>
+                  <p class="publication-current">
+                    Na stronie:
+                    <strong>
+                      {{ document.publishedHero.title }}
+                      {{ document.publishedHero.highlightedTitle }}
+                    </strong>
+                  </p>
+                  <p class="save-meta">
+                    Ostatni zapis: {{ document.updatedAt | warsawDate }} · wersja
+                    {{ document.revision }}
+                  </p>
+                  @if (heroForm.dirty) {
+                    <p class="publish-help">Zapisz zmiany, aby opublikować nową wersję.</p>
+                  }
+                  <button
+                    pButton
+                    class="button gold full"
+                    type="button"
+                    [disabled]="!canPublish"
+                    (click)="publishHero(false)"
+                  >
+                    Opublikuj teraz
+                    <app-icon name="diagonal" />
+                  </button>
+                  <div class="publish-divider"><span>lub zaplanuj</span></div>
+                  <label for="hero-publish-at">Termin publikacji hero</label>
+                  <app-date-input
+                    inputId="hero-publish-at"
+                    kind="datetime"
+                    [formControl]="heroPublishAt"
+                  />
+                  <small class="timezone-hint">Czas w Szczecinie · Europe/Warsaw</small>
+                  <button
+                    pButton
+                    class="button outline full"
+                    type="button"
+                    [disabled]="!canPublish || !heroPublishAt.value"
+                    (click)="publishHero(true)"
+                  >
+                    Zaplanuj publikację
+                  </button>
+                  @if (document.heroPublishAt) {
+                    <div class="scheduled-notice">
+                      <p-tag value="Publikacja zaplanowana" />
+                      <p>{{ document.heroPublishAt | warsawDate }}</p>
+                      <p>
+                        Zaplanowana wersja:
+                        <strong>{{ document.scheduledHero?.title }}</strong>
+                      </p>
+                      <small>Kolejne poprawki szkicu nie zmieniają tej zaplanowanej kopii.</small>
+                      <button
+                        pButton
+                        class="text-button"
+                        type="button"
+                        [disabled]="busy()"
+                        (click)="cancelSchedule()"
+                      >
+                        Anuluj zaplanowaną publikację
+                      </button>
+                    </div>
+                  }
+                </section>
+              </aside>
+            </div>
+          } @else {
+            <div class="events-layout">
+              <section class="event-list-panel">
+                <header class="panel-heading">
+                  <h2>Wydarzenia</h2>
+                  <button
+                    pButton
+                    class="button dark small"
+                    type="button"
+                    (click)="newEvent()"
+                  >
+                    + Nowe
+                  </button>
+                </header>
+                @for (event of document.events; track event.id) {
+                  <button
+                    type="button"
+                    class="event-row"
+                    [class.selected]="eventSelected() === event.id"
+                    (click)="editEvent(event)"
+                  >
+                    <span>
+                      <strong>{{ event.title }}</strong>
+                      <small>{{ event.date | date: 'dd.MM.yyyy' }} · {{ event.time }}</small>
+                    </span>
+                    <p-tag [value]="publicationLabel(event)" />
+                  </button>
+                }
+              </section>
+              <form
+                class="editor-panel event-editor"
+                [formGroup]="eventForm"
+                (ngSubmit)="saveEvent()"
+              >
+                <header class="panel-heading">
+                  <div>
+                    <h2>{{ eventSelected() ? 'Edytuj wydarzenie' : 'Nowe wydarzenie' }}</h2>
+                    <p>Dane wspólne dla repertuaru, karty wydarzenia i hero.</p>
+                  </div>
+                </header>
+                <fieldset>
+                  <legend>Podstawowe informacje</legend>
+                  <div class="field-grid">
+                    <div class="field wide">
+                      <label for="event-title">Tytuł</label>
+                      <input
+                        pInputText
+                        id="event-title"
+                        formControlName="title"
+                        maxlength="150"
+                      />
+                    </div>
+                    <div class="field wide">
+                      <label for="event-subtitle">Krótki opis</label>
+                      <input
+                        pInputText
+                        id="event-subtitle"
+                        formControlName="subtitle"
+                        maxlength="250"
+                      />
+                    </div>
+                    <div class="field">
+                      <label for="event-id">Identyfikator adresu</label>
+                      <input
+                        pInputText
+                        id="event-id"
+                        formControlName="id"
+                      />
+                      <small>Małe litery, cyfry i myślniki.</small>
+                    </div>
+                    <div class="field wide">
+                      <label for="event-section">Zakładka w serwisie</label>
+                      <p-select
+                        inputId="event-section"
+                        formControlName="catalogSection"
+                        [options]="catalogSections"
+                        optionLabel="label"
+                        optionValue="value"
+                        appendTo="body"
+                      />
+                    </div>
+                    <div class="field">
+                      <label for="event-category">Kategoria</label>
+                      <p-select
+                        inputId="event-category"
+                        formControlName="category"
+                        [options]="categories"
+                        appendTo="body"
+                      />
+                    </div>
+                    <div class="field">
+                      <label for="event-date">Data wydarzenia</label>
+                      <app-date-input
+                        inputId="event-date"
+                        kind="date"
+                        formControlName="date"
+                      />
+                    </div>
+                    <div class="field">
+                      <label for="event-time">Godzina</label>
+                      <app-date-input
+                        inputId="event-time"
+                        kind="time"
+                        formControlName="time"
+                      />
+                    </div>
+                    <div class="field">
+                      <label for="event-room">Sala / miejsce</label>
+                      <input
+                        pInputText
+                        id="event-room"
+                        formControlName="room"
+                      />
+                    </div>
+                    <div class="field">
+                      <label for="event-duration">Czas trwania (min, puste = nie podano)</label>
+                      <p-inputnumber
+                        inputId="event-duration"
+                        [useGrouping]="false"
+                        [min]="5"
+                        [max]="1440"
+                        formControlName="duration"
+                      />
+                    </div>
+                    <div class="field">
+                      <label for="event-price">Cena od (zł, puste = nie podano)</label>
+                      <p-inputnumber
+                        inputId="event-price"
+                        [useGrouping]="false"
+                        [min]="0"
+                        [max]="10000"
+                        [step]="0.01"
+                        [maxFractionDigits]="2"
+                        formControlName="price"
+                      />
+                    </div>
+                    <div class="field wide">
+                      <label for="event-ticket-url">Link do sprzedawcy biletów</label>
+                      <input
+                        pInputText
+                        id="event-ticket-url"
+                        type="url"
+                        formControlName="ticketUrl"
+                        maxlength="2048"
+                        placeholder="https://…"
+                        aria-describedby="event-ticket-url-help"
+                      />
+                      <small id="event-ticket-url-help">
+                        Pełny adres HTTPS strony zakupu dla tego wydarzenia. Przycisk KUP BILET
+                        przeniesie użytkownika bezpośrednio tutaj.
+                      </small>
+                      @if (
+                        eventForm.controls.ticketUrl.invalid &&
+                        (eventForm.controls.ticketUrl.dirty || eventForm.controls.ticketUrl.touched)
+                      ) {
+                        <small role="alert">
+                          Podaj poprawny adres HTTPS bez danych logowania (maksymalnie 2048 znaków).
+                        </small>
+                      }
+                    </div>
+                    <div class="field">
+                      <label for="event-status">Bilety</label>
+                      <p-select
+                        inputId="event-status"
+                        formControlName="status"
+                        [options]="ticketStates"
+                        optionLabel="label"
+                        optionValue="value"
+                        appendTo="body"
+                      />
+                    </div>
+                    <div class="field">
+                      <label for="event-audience">Dla kogo</label>
+                      <input
+                        pInputText
+                        id="event-audience"
+                        formControlName="audience"
+                      />
+                    </div>
+                    <div class="field">
+                      <label for="event-age">Rekomendowany wiek od</label>
+                      <p-inputnumber
+                        inputId="event-age"
+                        [useGrouping]="false"
+                        [min]="0"
+                        [max]="120"
+                        formControlName="age"
+                      />
+                    </div>
+                    <div class="field">
+                      <label for="event-mood">Nastrój</label>
+                      <input
+                        pInputText
+                        id="event-mood"
+                        formControlName="mood"
+                      />
+                    </div>
+                    <div class="field">
+                      <label for="event-image">Fotografia karty</label>
+                      <p-select
+                        inputId="event-image"
+                        formControlName="image"
+                        [options]="eventImages()"
+                        optionLabel="label"
+                        optionValue="value"
+                        appendTo="body"
+                      />
+                    </div>
+                    <div class="field wide">
+                      <label for="event-artists">Wykonawcy</label>
+                      <input
+                        pInputText
+                        id="event-artists"
+                        formControlName="artists"
+                        maxlength="2000"
+                      />
+                    </div>
+                    <div class="field wide">
+                      <label for="event-description">Opis wydarzenia</label>
+                      <textarea
+                        pTextarea
+                        id="event-description"
+                        formControlName="description"
+                        rows="5"
+                        maxlength="5000"
+                      ></textarea>
+                    </div>
+                    <div class="field wide">
+                      <label for="event-program">Program</label>
+                      <textarea
+                        pTextarea
+                        id="event-program"
+                        formControlName="programText"
+                        rows="4"
+                      ></textarea>
+                      <small>Każda pozycja w osobnej linii.</small>
+                    </div>
+                  </div>
+                </fieldset>
+                <fieldset>
+                  <legend>Publikacja wydarzenia</legend>
+                  <div class="field">
+                    <label for="event-publication">Stan publikacji</label>
+                    <p-select
+                      inputId="event-publication"
+                      formControlName="publicationState"
+                      [options]="states"
+                      optionLabel="label"
+                      optionValue="value"
+                      appendTo="body"
+                    />
+                  </div>
+                  @if (eventForm.controls.publicationState.value === 'scheduled') {
+                    <div class="field">
+                      <label for="event-publish-at">Termin publikacji wydarzenia</label>
+                      <app-date-input
+                        inputId="event-publish-at"
+                        kind="datetime"
+                        formControlName="publishAt"
+                      />
+                      <small>Czas w Szczecinie · Europe/Warsaw</small>
+                    </div>
+                  }
+                  <p class="publish-help">
+                    Termin publikacji określa, kiedy wydarzenie pojawi się w repertuarze. Jest
+                    niezależny od daty samego wydarzenia.
+                  </p>
+                </fieldset>
+                <fieldset>
+                  <legend>Tagi do wyszukiwania i filtrowania</legend>
+                  <div class="field">
+                    <label for="event-extra-tags">Tagi redakcyjne — jeden w wierszu</label>
+                    <textarea
+                      pTextarea
+                      id="event-extra-tags"
+                      [formControl]="extraTags"
+                      rows="3"
+                    ></textarea>
+                  </div>
+                </fieldset>
+                <app-event-details-editor
+                  [value]="eventDetails"
+                  (valueChange)="eventDetails = $event"
+                />
+                <footer class="form-actions">
+                  <span>
+                    {{
+                      eventForm.invalid && eventForm.touched
+                        ? 'Uzupełnij wymagane pola.'
+                        : 'Dane demonstracyjne — bez integracji sprzedaży.'
+                    }}
+                  </span>
+                  <button
+                    pButton
+                    class="button dark"
+                    type="submit"
+                    [disabled]="busy() || eventForm.invalid"
+                  >
+                    Zapisz wydarzenie
+                  </button>
+                </footer>
+              </form>
+            </div>
+          }
+        }
+      }
+    </div>
+  </main>
+</div>

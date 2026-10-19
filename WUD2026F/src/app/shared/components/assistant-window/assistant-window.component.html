@@ -1,0 +1,132 @@
+<button
+  #trigger
+  pButton
+  type="button"
+  class="assistant-fab"
+  [class.assistant-trigger-hidden]="opened()"
+  [class.assistant-label-hidden]="opening()"
+  aria-label="Otwórz SymfonIA — przewodnika po Filharmonii"
+  aria-haspopup="dialog"
+  [attr.aria-expanded]="opened()"
+  aria-controls="assistant-window"
+  (click)="open()"
+>
+  <span
+    class="assistant-fab-label"
+    aria-hidden="true"
+  >
+    SymfonIA
+  </span>
+  <app-icon name="spark" />
+</button>
+@if (opened()) {
+  <div
+    class="assistant-window-backdrop"
+    [class.is-closing]="closing()"
+    aria-hidden="true"
+    (click)="close()"
+  ></div>
+}
+<dialog
+  #dialog
+  id="assistant-window"
+  class="assistant-window"
+  [class.is-closing]="closing()"
+  aria-labelledby="assistant-window-title"
+  (cancel)="$event.preventDefault(); close()"
+>
+  <header class="window-header">
+    <div>
+      <h2 id="assistant-window-title">{{ content.title }}</h2>
+    </div>
+    <button
+      pButton
+      type="button"
+      class="window-reset"
+      [disabled]="assistant.busy() || assistant.restoring()"
+      (click)="resetConversation()"
+      aria-label="Wyczyść kontekst i rozpocznij nową rozmowę"
+    >
+      Nowa rozmowa
+    </button>
+    <button
+      pButton
+      type="button"
+      class="window-close"
+      aria-label="Zamknij asystenta"
+      (click)="close()"
+    >
+      <app-icon name="close" />
+    </button>
+  </header>
+  <div
+    #log
+    class="window-conversation"
+    tabindex="0"
+    aria-label="Rozmowa z przewodnikiem"
+  >
+    @if (!messages().length && !assistant.pendingQuestion() && !assistant.restoring()) {
+      <div class="window-welcome">
+        <h3>{{ content.welcomeTitle }}</h3>
+        <p>{{ content.welcome }}</p>
+        <div class="window-prompts">
+          @for (prompt of prompts; track prompt) {
+            <button
+              pButton
+              type="button"
+              (click)="ask(prompt)"
+              [disabled]="assistant.busy() || assistant.restoring()"
+            >
+              {{ prompt }}
+              <app-icon name="arrow" />
+            </button>
+          }
+        </div>
+      </div>
+    }
+    <app-curator-conversation (followUp)="ask($event)" />
+  </div>
+  <footer class="window-footer">
+    <form
+      class="window-composer"
+      (ngSubmit)="ask(question)"
+    >
+      <div class="window-input-shell">
+        <label
+          for="assistant-window-question"
+          class="sr-only"
+        >
+          Twoja wiadomość
+        </label>
+        <textarea
+          #input
+          pTextarea
+          id="assistant-window-question"
+          [(ngModel)]="question"
+          name="question"
+          rows="1"
+          maxlength="2000"
+          [placeholder]="content.placeholder"
+          (input)="resizeInput()"
+          (keydown)="onKeydown($event)"
+        ></textarea>
+      </div>
+      <button
+        pButton
+        type="submit"
+        class="window-send"
+        aria-label="Wyślij wiadomość"
+        [disabled]="!question.trim() || assistant.busy() || assistant.restoring()"
+      >
+        <app-icon
+          class="send-spark"
+          name="spark"
+        />
+        <app-icon
+          class="send-arrow"
+          name="arrow"
+        />
+      </button>
+    </form>
+  </footer>
+</dialog>

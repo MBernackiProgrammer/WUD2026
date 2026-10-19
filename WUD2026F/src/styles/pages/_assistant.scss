@@ -1,0 +1,97 @@
+/* pages / assistant */
+.assistant-page {
+  padding-block: 54px;
+  max-width: 960px;
+}
+.assistant-disclaimer {
+  display: flex;
+  gap: 16px;
+  padding: 20px;
+  background: var(--warm);
+  border-left: 2px solid var(--gold);
+  margin: 30px 0;
+}
+.assistant-disclaimer app-icon {
+  color: var(--gold-dark);
+}
+.assistant-disclaimer p {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 0;
+}
+.chat-log {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 26px;
+  max-height: 550px;
+  overflow: auto;
+}
+.chat-bubble {
+  background: var(--warm);
+  padding: 20px;
+  max-width: 90%;
+  align-self: flex-start;
+}
+.chat-bubble p {
+  font-size: 14px;
+  margin: 0;
+}
+.chat-bubble a {
+  display: inline-block;
+  margin-top: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  min-height: 30px;
+}
+.chat-bubble.from-user {
+  background: var(--ink);
+  color: #fff;
+  align-self: flex-end;
+}
+.chat-suggestions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.chat-suggestions button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: white;
+  border: 1px solid var(--line);
+  padding: 12px;
+  font-size: 11px;
+  min-height: 44px;
+}
+.chat-suggestions app-icon {
+  width: 15px;
+  height: 15px;
+}
+.chat-form {
+  display: flex;
+  border: 1px solid #bbb4a5;
+  padding: 6px;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+.chat-form input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  padding: 10px;
+  font-size: 14px;
+}
+.chat-form .button {
+  padding: 12px 16px;
+  min-height: 44px;
+}
+.chat-events {
+  margin-bottom: 30px;
+}
+.assistant-page > .text-link {
+  font-size: 11px;
+}

@@ -1,0 +1,214 @@
+<section class="audience-hero container">
+  <div>
+    <p class="eyebrow">{{ education() ? 'DLA EDUKACJI' : 'DLA BIZNESU' }}</p>
+    <h1>
+      {{
+        education() ? 'Muzyka, która otwiera horyzonty.' : 'Dobre spotkania mają wyjątkową oprawę.'
+      }}
+    </h1>
+    <p class="audience-lead">
+      {{
+        education()
+          ? 'Zapraszamy szkoły, uczelnie i instytucje edukacyjne do wspólnego odkrywania Filharmonii. Zacznij od wieku i zainteresowań swojej grupy.'
+          : 'Połączmy świat kultury z Twoją inicjatywą. Poznaj możliwości partnerstwa i organizacji wydarzeń w Filharmonii Szczecińskiej.'
+      }}
+    </p>
+    @if (education()) {
+      <a
+        class="button dark"
+        routerLink="/kalendarz"
+        [queryParams]="{ audience: 'Szkoły' }"
+      >
+        Kalendarz dla szkół
+        <app-icon name="arrow" />
+      </a>
+    } @else {
+      <a
+        class="button dark"
+        href="mailto:wynajmy@filharmonia.szczecin.pl"
+      >
+        Zapytaj o wynajem
+        <app-icon name="mail" />
+      </a>
+    }
+  </div>
+  <img
+    [src]="education() ? '/images/building-5.jpg' : '/images/building-28.jpg'"
+    [alt]="education() ? 'Przestronne foyer Filharmonii' : 'Złota Sala Symfoniczna'"
+    width="800"
+    height="533"
+  />
+</section>
+@if (education()) {
+  <section
+    class="container audience-cards"
+    aria-label="Oferta edukacyjna"
+  >
+    <article>
+      <app-icon name="music" />
+      <h2>Koncert zamiast zwykłej lekcji</h2>
+      <p>
+        Koncerty szkolne i warsztaty pozwalają poznawać instrumenty, uważnie słuchać i rozwijać
+        wyobraźnię. Wybierz wydarzenie odpowiednie dla wieku uczniów.
+      </p>
+      <a
+        class="text-link"
+        routerLink="/kalendarz"
+        [queryParams]="{ audience: 'Szkoły' }"
+      >
+        Wydarzenia dla szkół
+        <app-icon name="arrow" />
+      </a>
+    </article>
+    <article>
+      <app-icon name="user" />
+      <h2>Dla młodzieży i studentów</h2>
+      <p>
+        Pierwsze spotkanie z orkiestrą, wspólne wyjście na koncert, rozmowa o muzyce i sztuce.
+        Repertuar pomoże zaplanować wizytę także uczelniom i innym grupom edukacyjnym.
+      </p>
+      <a
+        class="text-link"
+        routerLink="/kalendarz"
+        [queryParams]="{ audience: 'Młodzież' }"
+      >
+        Oferta dla młodzieży
+        <app-icon name="arrow" />
+      </a>
+    </article>
+    <article>
+      <app-icon name="home" />
+      <h2>Zwiedzanie z grupą</h2>
+      <p>
+        Poznaj architekturę i przestrzenie, w których powstają muzyczne spotkania. Termin oraz
+        możliwość dopasowania wizyty do grupy ustal z zespołem zwiedzania.
+      </p>
+      <a
+        class="text-link"
+        href="mailto:zwiedzanie@filharmonia.szczecin.pl"
+      >
+        Zapytaj o wizytę grupową
+        <app-icon name="mail" />
+      </a>
+    </article>
+  </section>
+  <section class="container audience-contact">
+    <div>
+      <p class="eyebrow">ZAPLANUJMY TO RAZEM</p>
+      <h2>Powiedz nam, kto przyjedzie.</h2>
+      <p>
+        Przygotuj wiek uczestników, liczebność grupy, preferowany termin i potrzeby związane z
+        dostępnością. Te informacje ułatwią dobranie formy wizyty.
+      </p>
+    </div>
+    <a
+      class="button outline"
+      href="https://filharmonia.szczecin.pl/kontakt"
+      target="_blank"
+      rel="noopener"
+    >
+      Kontakt z Filharmonią
+      <app-icon name="diagonal" />
+    </a>
+  </section>
+  <p class="container audience-source">
+    Poznaj pełną ofertę:
+    <a
+      href="https://filharmonia.szczecin.pl/edu_filharmonia"
+      target="_blank"
+      rel="noopener"
+    >
+      EduFilharmonia — oficjalny serwis
+    </a>
+    .
+  </p>
+} @else {
+  <section
+    class="container audience-cards"
+    aria-label="Możliwości współpracy"
+  >
+    <article>
+      <app-icon name="spark" />
+      <h2>Partnerstwo z kulturą</h2>
+      <p>
+        Długofalowa współpraca lub wspólne wydarzenie — formę partnerstwa i działania promocyjne
+        ustalamy indywidualnie, z myślą o celach obu stron.
+      </p>
+      <a
+        class="text-link"
+        href="mailto:j.gibowski@filharmonia.szczecin.pl"
+      >
+        Porozmawiaj o partnerstwie
+        <app-icon name="mail" />
+      </a>
+    </article>
+    <article>
+      <app-icon name="calendar" />
+      <h2>Wydarzenia w Twoim rytmie</h2>
+      <p>
+        Konferencja, uroczystość firmowa albo wydarzenie artystyczne. Sale, hol i przestrzenie
+        wystawiennicze mogą stać się miejscem Twojego spotkania.
+      </p>
+      <a
+        class="text-link"
+        href="mailto:wynajmy@filharmonia.szczecin.pl"
+      >
+        Zapytaj o termin
+        <app-icon name="mail" />
+      </a>
+    </article>
+    <article>
+      <app-icon name="home" />
+      <h2>Przestrzeń, która robi wrażenie</h2>
+      <p>
+        Sala Symfoniczna mieści 953 osoby, Sala Kameralna — 192. Dostępne są też hol i galeria na
+        najwyższej kondygnacji. Układ wydarzenia i liczbę miejsc potwierdzimy przy ustalaniu oferty.
+      </p>
+      <a
+        class="text-link"
+        href="https://filharmonia.szczecin.pl/wynajem"
+        target="_blank"
+        rel="noopener"
+      >
+        Przestrzenie i warunki najmu
+        <app-icon name="diagonal" />
+      </a>
+    </article>
+  </section>
+  <section class="container audience-contact">
+    <div>
+      <p class="eyebrow">TWOJE WYDARZENIE U NAS</p>
+      <h2>Zacznijmy od pomysłu.</h2>
+      <p>
+        Napisz, jaki charakter ma spotkanie, ilu gości zapraszasz i jaki termin Cię interesuje.
+        Zespół najmu przedstawi możliwości oraz indywidualną wycenę.
+      </p>
+    </div>
+    <a
+      class="button outline"
+      href="mailto:wynajmy@filharmonia.szczecin.pl"
+    >
+      Napisz do zespołu najmu
+      <app-icon name="mail" />
+    </a>
+  </section>
+  <p class="container audience-source">
+    Informacje:
+    <a
+      href="https://filharmonia.szczecin.pl/partnerstwo_kultury_i_biznesu"
+      target="_blank"
+      rel="noopener"
+    >
+      Partnerstwo kultury i biznesu
+    </a>
+    ·
+    <a
+      href="https://filharmonia.szczecin.pl/wynajem"
+      target="_blank"
+      rel="noopener"
+    >
+      Najem i wspólna realizacja wydarzeń
+    </a>
+    .
+  </p>
+}

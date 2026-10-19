@@ -1,0 +1,250 @@
+<section
+  class="container search-intro"
+  aria-labelledby="search-title"
+>
+  <p class="eyebrow">ODKRYJ SWOJĄ FILHARMONIĘ</p>
+  <h1 id="search-title">Czego szukasz?</h1>
+  <p>
+    Wpisz temat, nazwisko lub pomysł na wyjście. Znajdziemy najbliższe wydarzenia i przydatne
+    informacje.
+  </p>
+</section>
+<section
+  class="container search-content"
+  aria-label="Wyszukiwarka treści"
+>
+  <div class="search-box">
+    <form
+      class="search-field"
+      role="search"
+      (ngSubmit)="submit()"
+    >
+      <app-icon name="search" />
+      <label
+        class="sr-only"
+        for="global-search"
+      >
+        Szukaj w całym serwisie
+      </label>
+      <input
+        pInputText
+        id="global-search"
+        name="query"
+        (focus)="previewOpen.set(!!query().trim())"
+        (keydown.escape)="previewOpen.set(false)"
+        [attr.aria-expanded]="previewOpen()"
+        aria-controls="search-preview"
+        type="search"
+        [ngModel]="query()"
+        (ngModelChange)="search($event)"
+        placeholder="Np. jazz, koncert dla dzieci, Chopin…"
+        autocomplete="off"
+      />
+      @if (query()) {
+        <button
+          pButton
+          type="button"
+          class="icon-button"
+          aria-label="Wyczyść wyszukiwanie"
+          (click)="search('')"
+        >
+          <app-icon name="close" />
+        </button>
+      }
+      <button
+        type="submit"
+        class="search-submit"
+        aria-label="Wyszukaj"
+      >
+        <app-icon name="search" />
+      </button>
+    </form>
+    @if (previewOpen() && query().trim()) {
+      <div
+        class="search-preview"
+        id="search-preview"
+        aria-label="Podpowiedzi i podgląd wydarzeń"
+      >
+        <div class="preview-text">
+          @for (record of results().records; track record.url) {
+            <a [routerLink]="record.url">
+              <app-icon name="search" />
+              <span>{{ record.title }}</span>
+              <app-icon name="arrow" />
+            </a>
+          }
+          @if (!results().records.length) {
+            <p>Brak podpowiedzi dla tego hasła.</p>
+          }
+        </div>
+        @if (results().events.length) {
+          <p class="preview-heading">Pasujące wydarzenia</p>
+          <div class="preview-covers">
+            @for (event of results().events.slice(0, 5); track event.id) {
+              <a
+                [routerLink]="['/wydarzenie', event.id]"
+                [attr.aria-label]="'Podgląd wydarzenia: ' + event.title"
+              >
+                <img
+                  [src]="'/images/' + event.image"
+                  alt=""
+                  width="240"
+                  height="160"
+                />
+                <strong>{{ event.title }}</strong>
+                <span>{{ event.date | date: 'dd.MM.yyyy' }} · {{ event.time }}</span>
+              </a>
+            }
+          </div>
+        }
+        <button
+          type="button"
+          class="preview-all"
+          (click)="submit()"
+        >
+          Pokaż wszystkie wyniki dla „{{ query() }}”
+          <app-icon name="arrow" />
+        </button>
+      </div>
+    }
+  </div>
+  <div class="search-options">
+    <p-checkbox
+      inputId="search-past"
+      [binary]="true"
+      [ngModel]="includePast()"
+      (ngModelChange)="togglePast($event)"
+    />
+    <label for="search-past">Szukaj również w przeszłości</label>
+  </div>
+  @if (!query().trim() && suggestions().length) {
+    <div
+      class="search-suggestions"
+      aria-label="Podpowiedzi wyszukiwania"
+    >
+      <span>{{ query() ? 'Spróbuj także:' : 'Na początek:' }}</span>
+      @for (suggestion of suggestions(); track suggestion) {
+        <button
+          type="button"
+          (click)="submit(suggestion)"
+        >
+          {{ suggestion }}
+        </button>
+      }
+    </div>
+  }
+  @if (monthHint()) {
+    <p
+      class="search-intent-hint"
+      role="status"
+    >
+      Rozpoznany termin:
+      <strong>{{ monthHint() }}</strong>
+      .
+      {{
+        includePast()
+          ? 'Przeszukujemy także przeszłe wydarzenia.'
+          : 'Pokazujemy aktualne i nadchodzące wydarzenia.'
+      }}
+    </p>
+  }
+  @if (submitted() && query().trim()) {
+    <p
+      class="search-count"
+      role="status"
+      aria-live="polite"
+    >
+      {{ store.eventsLoading() ? 'Aktualizujemy wyniki…' : 'Znaleziono: ' + results().count }}
+      <span>
+        {{ includePast() ? 'Z uwzględnieniem archiwum' : 'Wydarzenia aktualne i nadchodzące' }}
+      </span>
+    </p>
+    @if (results().information.length) {
+      <section
+        class="search-text-results"
+        aria-label="Informacje w serwisie"
+      >
+        <h2>Informacje</h2>
+        <ol>
+          @for (record of results().information; track record.url) {
+            <li>
+              <h3>
+                <a [routerLink]="record.url">
+                  {{ record.title }}
+                  <app-icon name="arrow" />
+                </a>
+              </h3>
+              <p>{{ record.text }}</p>
+            </li>
+          }
+        </ol>
+      </section>
+    }
+    @if (results().events.length) {
+      <section
+        class="search-event-results"
+        aria-labelledby="event-results-title"
+      >
+        <header>
+          <div>
+            <h2 id="event-results-title">Wydarzenia dla Ciebie</h2>
+            <p>
+              Najbliższe pasujące terminy{{
+                includePast() ? ', a następnie wydarzenia archiwalne' : ''
+              }}.
+            </p>
+          </div>
+          <span>{{ results().events.length }} wydarzeń</span>
+        </header>
+        <div class="event-grid">
+          @for (event of results().events.slice(0, eventLimit()); track event.id) {
+            <app-event-card [event]="event" />
+          }
+        </div>
+        @if (eventLimit() < results().events.length) {
+          <button
+            type="button"
+            class="button outline search-more"
+            (click)="showMore()"
+          >
+            Pokaż kolejne wydarzenia
+            <app-icon name="arrow" />
+          </button>
+        }
+      </section>
+    }
+    @if (!results().count && !store.eventsLoading()) {
+      <div class="search-empty">
+        <app-icon name="search" />
+        <h2>Brak wyników wyszukiwania</h2>
+        <p>Spróbuj nazwy gatunku, nazwiska artysty albo krótszego hasła.</p>
+        @if (!includePast()) {
+          <button
+            type="button"
+            class="button outline"
+            (click)="togglePast(true)"
+          >
+            Sprawdź również archiwum
+            <app-icon name="clock" />
+          </button>
+        }
+        <a
+          class="text-link"
+          routerLink="/kalendarz"
+        >
+          Przejrzyj kalendarz
+          <app-icon name="arrow" />
+        </a>
+      </div>
+    }
+  } @else {
+    <div class="search-welcome">
+      <app-icon name="music" />
+      <h2>Zacznij od tego, co lubisz.</h2>
+      <p>
+        „Jazz”, „koncert dla dziecka” lub „zwiedzanie w weekend” — nie musisz znać tytułu
+        wydarzenia.
+      </p>
+    </div>
+  }
+</section>

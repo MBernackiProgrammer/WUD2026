@@ -1,0 +1,124 @@
+<p-card
+  styleClass="event-card"
+  [class.past-event]="isPast"
+  role="article"
+>
+  <div class="event-image">
+    <a
+      [routerLink]="['/wydarzenie', event.id]"
+      tabindex="-1"
+      aria-hidden="true"
+    >
+      <img
+        [src]="'/images/' + event.image"
+        alt=""
+        loading="lazy"
+        width="800"
+        height="533"
+      />
+    </a>
+    @if (isPast) {
+      <span class="event-archive-label">Wydarzenie już się odbyło</span>
+    }
+    <p-tag
+      styleClass="image-label"
+      [value]="event.category"
+    />
+    @if (store.canFavorite()) {
+      <button
+        pButton
+        class="favorite"
+        [disabled]="store.savingFavorite()"
+        [class.saved]="isFavorite"
+        (click)="toggleFavorite()"
+        [attr.aria-label]="favoriteLabel"
+        [attr.aria-pressed]="isFavorite"
+        type="button"
+      >
+        <app-icon name="heart" />
+      </button>
+    }
+  </div>
+  <div class="event-body">
+    <p class="event-date">
+      <time [attr.datetime]="event.date + 'T' + event.time">
+        {{ event.date | date: 'dd.MM.yyyy' }}
+        <span>/</span>
+        {{ event.time }}
+      </time>
+    </p>
+    <h3>
+      <a [routerLink]="['/wydarzenie', event.id]">{{ event.title }}</a>
+    </h3>
+    <p class="event-subtitle">{{ event.subtitle }}</p>
+    <p class="event-performers">
+      {{ event.details?.performers?.length ? event.details?.performers?.[0]?.name : event.artists }}
+    </p>
+    <div class="event-tags">
+      @for (tag of event.tags ?? []; track tag) {
+        @if (tag !== 'repertoire' && tag !== 'events') {
+          <span>{{ tag }}</span>
+        }
+      }
+    </div>
+    <p
+      class="ticket-status"
+      [id]="'ticket-status-' + event.id"
+    >
+      {{ isPast ? 'Bilety niedostępne — wydarzenie już się odbyło' : tickets.label }}
+    </p>
+    <p class="event-place">
+      {{ event.room }}
+      @if (event.duration !== null) {
+        <span>· {{ event.duration }} min</span>
+      }
+    </p>
+    <div class="event-actions">
+      @if (!isPast && event.price !== null) {
+        <footer class="event-bottom">
+          <span>
+            {{
+              event.status === 'sold-out'
+                ? 'Wyprzedane'
+                : event.price === 0
+                  ? 'Wstęp wolny'
+                  : 'od ' + event.price + ' zł'
+            }}
+          </span>
+          @if (sellerUrl || event.status === 'sold-out') {
+            <a
+              [routerLink]="['/wydarzenie', event.id]"
+              [attr.aria-label]="'Szczegóły: ' + event.title"
+            >
+              Szczegóły
+              <app-icon name="arrow" />
+            </a>
+          }
+        </footer>
+      }
+      @if (!isPast && tickets.canBuy) {
+        <a
+          pButton
+          class="event-ticket-button"
+          [href]="sellerUrl"
+          [attr.aria-label]="'Kup bilet: ' + event.title"
+        >
+          KUP BILET
+          <app-icon name="ticket" />
+        </a>
+      } @else {
+        <button
+          pButton
+          type="button"
+          class="event-ticket-button"
+          disabled
+          [attr.aria-label]="'Kup bilet: ' + event.title"
+          [attr.aria-describedby]="'ticket-status-' + event.id"
+        >
+          KUP BILET
+          <app-icon name="ticket" />
+        </button>
+      }
+    </div>
+  </div>
+</p-card>

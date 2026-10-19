@@ -1,0 +1,119 @@
+<article class="container institution-page">
+  <header class="editorial-header">
+    <p class="eyebrow">LUDZIE FILHARMONII</p>
+    <h1>Orkiestra Symfoniczna</h1>
+    <p class="lead">Wspólne brzmienie. Indywidualne osobowości.</p>
+    <p>
+      Od 1948 roku zespół buduje muzyczną historię Szczecina. Koncertuje w kraju i za granicą, a
+      jego nagrania przybliżają między innymi twórczość patrona — Mieczysława Karłowicza.
+    </p>
+  </header>
+  <nav
+    class="local-links"
+    aria-label="O Filharmonii"
+  >
+    <a routerLink="/odkryj">O Filharmonii</a>
+    <a routerLink="/historia">Historia</a>
+    <a routerLink="/budynek">Budynek</a>
+  </nav>
+  <div class="roster-tools">
+    <label for="musician-search">Znajdź osobę lub instrument</label>
+    <input
+      id="musician-search"
+      type="search"
+      placeholder="Np. skrzypce, Paweł Maślanka"
+      [ngModel]="query()"
+      (ngModelChange)="query.set($event)"
+    />
+  </div>
+  <div aria-live="polite">
+    @if (!groups().length) {
+      <p>Brak wyników wyszukiwania</p>
+    }
+  </div>
+  @for (group of groups(); track group.role) {
+    <section class="roster-section">
+      <h2>{{ group.role }}</h2>
+      <div class="musician-grid">
+        @for (person of group.people; track person.name) {
+          <button
+            class="musician"
+            type="button"
+            (click)="open(person)"
+            aria-haspopup="dialog"
+          >
+            <img
+              [src]="person.image"
+              alt=""
+              loading="lazy"
+              width="100"
+              height="100"
+            />
+            <span>
+              <strong>{{ person.name }}</strong>
+              <small>
+                Poznaj osobę
+                <span aria-hidden="true">↗</span>
+              </small>
+            </span>
+          </button>
+        }
+      </div>
+    </section>
+  }
+  <p class="source-note">
+    Skład i biogramy opracowano na podstawie oficjalnych informacji Filharmonii. Sprawdzenie:
+    18.10.2026.
+    <a
+      href="https://filharmonia.szczecin.pl/grupy/1-Orkiestra_Symfoniczna_Filharmonii_w_Szczecinie"
+      target="_blank"
+      rel="noopener"
+    >
+      Źródło danych
+    </a>
+    .
+  </p>
+</article>
+<dialog
+  (keydown.escape)="$event.stopPropagation(); $event.preventDefault(); close()"
+  #artistDialog
+  class="musician-dialog"
+  aria-labelledby="artist-name"
+>
+  <header>
+    <h2 id="artist-name">{{ selected()?.name }}</h2>
+    <button
+      type="button"
+      (click)="close()"
+      aria-label="Zamknij profil"
+      autofocus
+    >
+      ×
+    </button>
+  </header>
+  @if (selected(); as person) {
+    <div class="artist-dialog">
+      <img
+        [src]="person.image"
+        alt=""
+        width="120"
+        height="120"
+      />
+      <p class="eyebrow">{{ person.role }}</p>
+      <p>{{ person.bio }}</p>
+      @if (!person.hasBiography) {
+        <p class="source-note">
+          Filharmonia nie publikuje osobnego biogramu tej osoby. Podajemy potwierdzoną funkcję w
+          zespole.
+        </p>
+      }
+      <a
+        [href]="person.source"
+        target="_blank"
+        rel="noopener"
+      >
+        Źródło informacji — Filharmonia w Szczecinie
+      </a>
+    </div>
+  }
+</dialog>

@@ -1,0 +1,92 @@
+/* brand and controls */
+/* Keep essential reading and controls comfortable on a phone. */
+.event-subtitle {
+  font-size: 15px;
+}
+.event-place {
+  font-size: 13px;
+}
+.hero-description {
+  font-size: 16px;
+}
+.bottom-nav a {
+  font-size: 10px;
+  min-width: 56px;
+}
+.footer-top > div > a {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+.footer-bottom a {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+.brand-mark {
+  object-fit: contain;
+}
+/* One architectural symbol across all application surfaces. */
+.brand-mark {
+  width: 50px;
+  height: 54px;
+  color: var(--ink);
+}
+.footer-symbol {
+  display: flex;
+  width: 76px;
+  height: 76px;
+  color: var(--gold);
+  margin-bottom: 24px;
+}
+.bottom-nav app-icon[name='home'] {
+  width: 24px;
+  height: 24px;
+}
+.bottom-nav a.active app-icon {
+  color: var(--gold);
+}
+@media (min-width: 1024px) {
+  .brand-mark {
+    width: 58px;
+    height: 62px;
+  }
+}
+/* Preserve the supplied artwork exactly, including in small navigation icons. */
+.footer-symbol {
+  --brand-filter: invert(1);
+  --brand-blend: screen;
+}
+/* Mobile uses the bottom navigation; desktop retains the full header menu. */
+@media (max-width: 1023px) {
+  .header-actions > a[aria-label='Szukaj'] {
+    display: none;
+  }
+}
+.language-picker {
+  width: 108px;
+  min-height: 44px;
+  padding: 10px 20px 10px 10px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background-color: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  margin-left: 8px;
+}
+.language-picker:hover {
+  border-color: var(--gold-dark);
+}
+@media (max-width: 599px) {
+  .header-inner {
+    gap: 8px;
+  }
+  .language-picker {
+    width: 99px;
+    font-size: 11px;
+    margin-left: 0;
+    padding-left: 8px;
+  }
+}

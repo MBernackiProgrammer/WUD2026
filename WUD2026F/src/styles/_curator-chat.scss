@@ -1,0 +1,226 @@
+.window-reset.p-button {
+  margin-inline-start: auto;
+  align-self: center;
+  flex: 0 0 auto;
+  white-space: nowrap;
+  min-height: 40px;
+  padding: 6px 8px;
+  background: transparent;
+  border: 0;
+  color: var(--gold-dark);
+  font-size: 11px;
+  text-align: center;
+}
+app-curator-conversation {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+.curator-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-width: 800px;
+  margin: auto;
+}
+.curator-message {
+  align-self: flex-start;
+  width: fit-content;
+  max-width: 100%;
+  min-width: 0;
+  padding: 16px 18px;
+  background: var(--warm);
+  border-radius: 20px 20px 20px 4px;
+  overflow-wrap: anywhere;
+}
+.curator-message.from-user {
+  align-self: flex-end;
+  max-width: 90%;
+  background: var(--ink);
+  color: white;
+  border-radius: 20px 20px 4px 20px;
+}
+.curator-message > p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+.curator-event {
+  margin-top: 20px;
+  padding: 18px 0 2px;
+  border-top: 1px solid var(--line);
+}
+.curator-event h3 {
+  margin: 0 0 10px;
+  font-size: 23px;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+}
+.curator-event h3 a:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.curator-event > p {
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 0 0 10px;
+}
+.curator-event .curator-event-category {
+  font-size: 10px;
+  color: var(--gold-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+}
+.curator-event .curator-event-date {
+  font-weight: 700;
+}
+.curator-event-reason {
+  color: var(--muted);
+}
+.curator-event-insight {
+  border-left: 2px solid var(--gold);
+  padding-left: 12px;
+}
+.curator-event-insight span {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--gold-dark);
+  margin-bottom: 5px;
+}
+.curator-event-actions {
+  display: grid;
+  gap: 8px;
+  margin: 16px 0 12px;
+}
+.curator-event-actions .p-button {
+  justify-content: space-between;
+  width: 100%;
+  font-size: 11px;
+  min-height: 44px;
+  padding: 12px;
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.curator-event-source {
+  display: inline-block;
+  font-size: 10px;
+  color: var(--gold-dark);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  padding-block: 8px;
+}
+.calendar-choice-event {
+  margin: 0 0 8px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.calendar-choice-description,
+.calendar-choice-note {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+.calendar-choice-options {
+  display: grid;
+  gap: 10px;
+}
+.calendar-choice-options .p-button {
+  width: 100%;
+  justify-content: space-between;
+  min-height: 48px;
+}
+.calendar-choice-note {
+  margin: 4px 0 0;
+}
+.curator-thinking {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--gold-dark);
+  font-size: 13px;
+  padding: 12px;
+  margin: 0;
+}
+.curator-thinking-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 16px;
+}
+.curator-thinking-dots > span {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: curator-thinking-pulse 1.4s ease-in-out infinite;
+}
+.curator-thinking-dots > span:nth-child(2) {
+  animation-delay: 0.16s;
+}
+.curator-thinking-dots > span:nth-child(3) {
+  animation-delay: 0.32s;
+}
+@keyframes curator-thinking-pulse {
+  0%,
+  60%,
+  100% {
+    opacity: 0.35;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(-4px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .curator-thinking-dots > span {
+    animation: none;
+  }
+}
+.curator-error {
+  max-width: 800px;
+  margin: 16px auto 0;
+  border: 1px solid var(--line);
+  padding: 14px;
+  border-radius: 12px;
+}
+.curator-error p {
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 0 0 12px;
+}
+.curator-error .p-button {
+  font-size: 12px;
+  min-height: 44px;
+}
+.curator-follow-ups {
+  display: grid;
+  gap: 8px;
+  margin: 18px auto 0;
+  max-width: 800px;
+}
+.curator-follow-ups .p-button {
+  text-align: left;
+  justify-content: space-between;
+  color: var(--ink);
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  min-height: 44px;
+  padding: 12px;
+  font-size: 12px;
+}
+.curator-page-note {
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+@media (min-width: 768px) {
+  .curator-event-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

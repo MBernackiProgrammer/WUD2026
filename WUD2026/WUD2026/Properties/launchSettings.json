@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "environment": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false
+    }
+  }
+}

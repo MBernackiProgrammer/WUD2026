@@ -1,0 +1,52 @@
+name: filharmonia
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-filharmonia}
+      POSTGRES_USER: ${POSTGRES_USER:-filharmonia}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}
+      TZ: ${TZ:-Europe/Warsaw}
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5433}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+  api:
+    profiles: ["api"]
+    build:
+      context: .
+      dockerfile: WUD2026/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      Database__Host: postgres
+      Database__Port: 5432
+      Database__Name: ${POSTGRES_DB:-filharmonia}
+      Database__Username: ${POSTGRES_USER:-filharmonia}
+      Database__Password: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}
+      Identity__FrontendUrl: ${PUBLIC_SITE_URL:-http://localhost:4200}
+      Identity__RequireConfirmedEmail: ${REQUIRE_CONFIRMED_EMAIL:-false}
+      Identity__BootstrapAdmin__Email: ${BOOTSTRAP_ADMIN_EMAIL:-}
+      Identity__BootstrapAdmin__Password: ${BOOTSTRAP_ADMIN_PASSWORD:-}
+      Ai__ApiKey: ${OPENAI_API_KEY:-}
+      Ai__Model: ${AI_MODEL:-gpt-5-mini}
+      Email__Smtp__Host: ${SMTP_HOST:-}
+      Email__From: ${SMTP_FROM:-}
+      Email__Smtp__Username: ${SMTP_USERNAME:-}
+      Email__Smtp__Password: ${SMTP_PASSWORD:-}
+    volumes:
+      - dev-identity-keys:/home/app/.aspnet/DataProtection-Keys
+    ports:
+      - "127.0.0.1:${API_PORT:-5296}:8080"
+    depends_on:
+      postgres: { condition: service_healthy }
+    restart: unless-stopped
+volumes:
+  postgres-data:
+  dev-identity-keys:

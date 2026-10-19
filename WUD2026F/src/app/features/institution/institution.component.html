@@ -1,0 +1,407 @@
+<article class="container institution-page">
+  @switch (page) {
+    @case ('budynek') {
+      <header class="editorial-header">
+        <p class="eyebrow">ARCHITEKTURA DLA MUZYKI</p>
+        <h1>Budynek Filharmonii</h1>
+        <p class="lead">Biała fasada, złota sala, przestrzeń spotkania.</p>
+      </header>
+      <img
+        class="editorial-image"
+        src="/images/building-3-large.webp"
+        alt="Biała bryła Filharmonii w Szczecinie"
+        width="800"
+        height="587"
+      />
+      <div class="reading-column">
+        <section>
+          <h2>Projekt Barozzi/Veiga</h2>
+          <p>
+            W 2004 roku rozpoczęła się droga do nowej siedziby. Konkurs z 2007 roku przyciągnął 44
+            pracownie; wybrano propozycję barcelońskiego studia Barozzi/Veiga. Nowy gmach otwarto
+            wraz z sezonem 2014/2015, w miejscu dawnego Konzerthausu.
+          </p>
+        </section>
+        <section>
+          <h2>Dwie sale, różne doświadczenia</h2>
+          <p>
+            Na czterech kondygnacjach mieści się ponad 12 000 m² przestrzeni. Sala symfoniczna ma
+            953 miejsca, a kameralna — 192. Nad geometrią powierzchni wpływających na brzmienie
+            pracował z architektami akustyk Higini Arau.
+          </p>
+          <img
+            class="editorial-image"
+            src="/images/building-28.jpg"
+            alt="Wnętrze złotej sali symfonicznej"
+            width="800"
+            height="533"
+            loading="lazy"
+          />
+        </section>
+        <section>
+          <h2>Poznaj budynek od środka</h2>
+          <p>
+            Wizyta może obejmować foyer, sale koncertowe i galerie. Dostępność konkretnych
+            przestrzeni zależy od programu danego zwiedzania.
+          </p>
+          <a
+            class="button dark"
+            routerLink="/kalendarz"
+            [queryParams]="{ category: 'Zwiedzanie' }"
+          >
+            Sprawdź terminy zwiedzania
+          </a>
+        </section>
+        <nav class="local-links">
+          <a routerLink="/historia">Historia miejsca</a>
+          <a
+            routerLink="/dostepnosc"
+            fragment="budynek"
+          >
+            Dostępność budynku
+          </a>
+        </nav>
+        <p class="source-note">
+          Opracowanie na podstawie
+          <a
+            href="https://filharmonia.szczecin.pl/budynek"
+            target="_blank"
+            rel="noopener"
+          >
+            oficjalnego opisu budynku
+          </a>
+          . Sprawdzenie: 18.10.2026.
+        </p>
+      </div>
+    }
+    @case ('historia') {
+      <header class="editorial-header">
+        <p class="eyebrow">MUZYKA WPISANA W MIASTO</p>
+        <h1>Historia Filharmonii</h1>
+        <p class="lead">Od powojennej orkiestry do własnej sceny przy Małopolskiej.</p>
+      </header>
+      <div class="reading-column timeline">
+        <section>
+          <p class="year">1884</p>
+          <h2>Dom koncertowy</h2>
+          <p>
+            18 października otwarto szczeciński Konzerthaus. Podczas inauguracji zabrzmiało
+            „Stworzenie świata” Haydna. Dzisiejsza Filharmonia stoi w tym samym miejscu, kontynuując
+            muzyczne przeznaczenie tej części miasta.
+          </p>
+        </section>
+        <section>
+          <p class="year">1948</p>
+          <h2>Początek orkiestry</h2>
+          <p>
+            W powojennym Szczecinie powstała orkiestra symfoniczna. Tworzący ją muzycy odbudowywali
+            życie koncertowe miasta, początkowo pracując w skromnych, tymczasowych warunkach.
+          </p>
+        </section>
+        <section>
+          <p class="year">1953</p>
+          <h2>Powstaje instytucja</h2>
+          <p>
+            Filharmonia rozpoczęła działalność w sali w lewym skrzydle dzisiejszego Urzędu Miasta.
+            Lokalizacja planowana jako tymczasowa służyła muzykom przez kolejne dziesięciolecia.
+          </p>
+        </section>
+        <section>
+          <p class="year">2004–2007</p>
+          <h2>Droga do nowej siedziby</h2>
+          <p>
+            Pomysł budowy przy Małopolskiej przybrał formę międzynarodowego konkursu
+            architektonicznego. Zwyciężył projekt studia Barozzi/Veiga.
+          </p>
+        </section>
+        <section>
+          <p class="year">2014</p>
+          <h2>Otwarcie przy Małopolskiej</h2>
+          <p>
+            Sezon 2014/2015 rozpoczął nowy rozdział: własne sale symfoniczna i kameralna, galerie
+            oraz przestrzenie spotkań.
+          </p>
+        </section>
+        <nav class="local-links">
+          <a routerLink="/orkiestra">Poznaj orkiestrę</a>
+          <a routerLink="/budynek">Poznaj budynek</a>
+        </nav>
+        <p class="source-note">
+          Źródła:
+          <a
+            href="https://historia.filharmonia.szczecin.pl/pl/historia_filharmonii"
+            target="_blank"
+            rel="noopener"
+          >
+            archiwum historii Filharmonii
+          </a>
+          i
+          <a
+            href="https://filharmonia.szczecin.pl/budynek"
+            target="_blank"
+            rel="noopener"
+          >
+            opis siedziby
+          </a>
+          . Sprawdzenie: 18.10.2026.
+        </p>
+      </div>
+    }
+    @case ('media') {
+      <header class="editorial-header">
+        <p class="eyebrow">DLA REDAKCJI I TWÓRCÓW</p>
+        <h1>Strefa mediów</h1>
+        <p class="lead">Materiały o Filharmonii i kontakt prasowy w jednym miejscu.</p>
+      </header>
+      <div class="information-grid">
+        <section class="info-panel">
+          <h2>Kontakt prasowy</h2>
+          <p>Katarzyna Plater-Zyberk</p>
+          <a href="mailto:rzecznik@filharmonia.szczecin.pl">rzecznik&#64;filharmonia.szczecin.pl</a>
+          <a href="tel:+48537999308">+48 537 999 308</a>
+          <p>
+            W sprawie wywiadów, informacji dla redakcji i materiałów do publikacji skontaktuj się z
+            rzeczniczką.
+          </p>
+        </section>
+        <section>
+          <h2>Materiały do pobrania</h2>
+          <p>Oficjalne paczki udostępniane przez Filharmonię:</p>
+          <div class="download-list">
+            <a href="https://filharmonia.szczecin.pl/files/download/pl_130download.zip">
+              Logotyp Filharmonii
+              <small>ZIP ↓</small>
+            </a>
+            <a href="https://filharmonia.szczecin.pl/files/download/pl_131download.zip">
+              Zdjęcia budynku
+              <small>ZIP ↓</small>
+            </a>
+            <a href="https://filharmonia.szczecin.pl/files/download/pl_133download.zip">
+              Orkiestra i Przemysław Neumann
+              <small>ZIP ↓</small>
+            </a>
+          </div>
+          <p class="source-note">
+            Pliki pochodzą z serwera Filharmonii. Przed publikacją sprawdź informacje o autorach i
+            warunkach użycia zawarte w materiałach; w razie wątpliwości zapytaj kontakt prasowy.
+          </p>
+        </section>
+      </div>
+      <p class="source-note">
+        Źródła:
+        <a
+          href="https://filharmonia.szczecin.pl/do_pobrania"
+          target="_blank"
+          rel="noopener"
+        >
+          materiały prasowe
+        </a>
+        ,
+        <a
+          href="https://filharmonia.szczecin.pl/kontakt"
+          target="_blank"
+          rel="noopener"
+        >
+          kontakt instytucji
+        </a>
+        . Sprawdzenie: 18.10.2026.
+      </p>
+    }
+    @case ('kontakt') {
+      <header class="editorial-header">
+        <p class="eyebrow">JESTEŚMY W SZCZECINIE</p>
+        <h1>Kontakt</h1>
+        <p class="lead">Wybierz sprawę, z którą do nas przychodzisz.</p>
+      </header>
+      <div class="information-grid">
+        <section class="info-panel">
+          <h2>Filharmonia im. Mieczysława Karłowicza w Szczecinie</h2>
+          <address>
+            ul. Małopolska 48
+            <br />
+            70-515 Szczecin
+          </address>
+          <a
+            class="button dark"
+            href="https://www.google.com/maps/dir/?api=1&destination=Filharmonia+Szczecin+Ma%C5%82opolska+48"
+            target="_blank"
+            rel="noopener"
+          >
+            Wyznacz trasę
+          </a>
+          <p>
+            NIP: 851-031-19-73
+            <br />
+            REGON: 000280488
+          </p>
+          <a
+            routerLink="/dostepnosc"
+            fragment="budynek"
+          >
+            Dostępność budynku
+          </a>
+        </section>
+        <div class="contact-list">
+          <section>
+            <h2>Bilety i rezerwacje</h2>
+            <a href="tel:+48914310720">+48 91 431 07 20</a>
+            <a href="mailto:kasa@filharmonia.szczecin.pl">kasa&#64;filharmonia.szczecin.pl</a>
+            <p>
+              Kasa: wtorek–piątek 12:00–18:00, sobota 12:00–16:00 oraz godzinę przed własnymi
+              wydarzeniami biletowanymi.
+            </p>
+            <p>
+              Infolinia: wtorek–czwartek 10:00–16:00
+              <br />
+              <a href="tel:+48539949454">+48 539 949 454</a>
+            </p>
+          </section>
+          <section>
+            <h2>Sekretariat</h2>
+            <a href="tel:+48914309511">+48 91 430 95 11</a>
+            <a href="mailto:sekretariat@filharmonia.szczecin.pl">
+              sekretariat&#64;filharmonia.szczecin.pl
+            </a>
+            <p>Poniedziałek–piątek 8:00–16:00</p>
+          </section>
+          <section>
+            <h2>Zwiedzanie grupowe</h2>
+            <a href="mailto:zwiedzanie@filharmonia.szczecin.pl">
+              zwiedzanie&#64;filharmonia.szczecin.pl
+            </a>
+          </section>
+          <section>
+            <h2>Wynajem przestrzeni</h2>
+            <p>Magdalena Sawicka-Błądek</p>
+            <a href="tel:+48576050270">+48 576 050 270</a>
+            <a href="mailto:wynajmy@filharmonia.szczecin.pl">wynajmy&#64;filharmonia.szczecin.pl</a>
+            <a routerLink="/biznes">Oferta dla biznesu</a>
+          </section>
+          <section>
+            <h2>Prasa i media</h2>
+            <a routerLink="/media">Kontakt prasowy i materiały</a>
+          </section>
+        </div>
+      </div>
+      <p class="source-note">
+        Dane i godziny według
+        <a
+          href="https://filharmonia.szczecin.pl/kontakt"
+          target="_blank"
+          rel="noopener"
+        >
+          oficjalnej strony kontaktowej
+        </a>
+        , sprawdzone 18.10.2026. W dni świąteczne godziny mogą się zmienić.
+      </p>
+    }
+    @case ('dostepnosc') {
+      <header class="editorial-header">
+        <p class="eyebrow">DOSTĘP DLA KAŻDEGO</p>
+        <h1>Deklaracja dostępności</h1>
+        <p class="lead">Informacja o dostępności tego serwisu i wizycie w Filharmonii.</p>
+      </header>
+      <div class="reading-column">
+        <section class="info-panel">
+          <h2>Zakres i stan oceny</h2>
+          <p>
+            Ta informacja dotyczy aktualnej wersji naszego serwisu: kalendarza, wyszukiwarki, stron
+            wydarzeń, konta i treści instytucjonalnych. Nie jest deklaracją dotyczącą witryny
+            filharmonia.szczecin.pl.
+          </p>
+          <p>
+            Nie przeprowadzono pełnego niezależnego audytu tego serwisu. Pełna zgodność z WCAG 2.2
+            na poziomie AA nie została potwierdzona. Poniżej opisujemy wdrożone udogodnienia i
+            obszary wymagające weryfikacji.
+          </p>
+          <p>
+            Data przygotowania informacji: 18 października 2026. Nie jest to data audytu ani
+            potwierdzenie zgodności prawnej.
+          </p>
+        </section>
+        <section>
+          <h2>Udogodnienia w serwisie</h2>
+          <ul>
+            <li>Odnośnik „Przejdź do treści” oraz nawigacja okruszkowa.</li>
+            <li>
+              Przyciski zmiany wielkości tekstu, kontrastu i ograniczenia ruchu w górnym pasku.
+            </li>
+            <li>
+              Obsługa głównych funkcji klawiaturą, etykiety pól oraz widoczne stany skupienia.
+            </li>
+            <li>
+              Możliwość zatrzymania filmu na stronie głównej. Odtwarzacz audio wymaga świadomego
+              uruchomienia.
+            </li>
+            <li>
+              Układ dostosowuje się do szerokości ekranu; przeglądarka pozwala powiększać stronę.
+            </li>
+          </ul>
+        </section>
+        <section>
+          <h2>Ograniczenia i treści zewnętrzne</h2>
+          <p>
+            Pełna obsługa czytników ekranu, kontrast wszystkich stanów interfejsu oraz działanie
+            przy dużym powiększeniu wymagają całościowego audytu. Sam pasek dostępności nie
+            gwarantuje spełnienia standardu.
+          </p>
+          <p>
+            Programy koncertów i paczki prasowe pochodzą z zewnętrznych źródeł. Ich dostępność może
+            być różna i nie została w tym serwisie potwierdzona. Zakup biletów, logowanie zewnętrzne
+            i mapy mogą przenosić do usług innych operatorów.
+          </p>
+        </section>
+        <section>
+          <h2>Zgłoś problem z serwisem</h2>
+          <p>
+            Do zgłoszenia dołącz adres podstrony, opis trudności, używane urządzenie lub technologię
+            wspomagającą oraz dogodny sposób odpowiedzi. W lokalnej wersji demonstracyjnej
+            zgłoszenie przekaż osobie udostępniającej aplikację.
+          </p>
+          <p>
+            W sprawie dostępności informacji lub wizyty w instytucji oficjalny kontakt to Patrycja
+            Proczak:
+            <a href="mailto:p.proczak@filharmonia.szczecin.pl">
+              p.proczak&#64;filharmonia.szczecin.pl
+            </a>
+            ,
+            <a href="tel:+48914310725">+48 91 431 07 25</a>
+            . Koordynatorka dostępności: Aleksandra Bednarska,
+            <a href="mailto:a.bednarska@filharmonia.szczecin.pl">
+              a.bednarska&#64;filharmonia.szczecin.pl
+            </a>
+            .
+          </p>
+        </section>
+        <section id="budynek">
+          <h2>Dostępność budynku</h2>
+          <p>
+            Według informacji instytucji wejście od Małopolskiej jest na poziomie terenu. Windy
+            obsługują piętra i parking; mają oznaczenia Braille’a i komunikaty głosowe. Toalety
+            dostosowane są na parterze i pierwszym piętrze, a do budynku można wejść z psem
+            asystującym.
+          </p>
+          <p>
+            W budynku działa pętla indukcyjna. Instytucja informuje o braku tłumacza języka migowego
+            oraz braku kontrastowych oznaczeń stopni schodów. Szczegóły wsparcia i miejsca na
+            widowni warto uzgodnić z kasą:
+            <a href="tel:+48914310720">+48 91 431 07 20</a>
+            .
+          </p>
+        </section>
+        <p class="source-note">
+          Dane o budynku i kontakty:
+          <a
+            href="https://filharmonia.szczecin.pl/deklaracja_dostepnosci"
+            target="_blank"
+            rel="noopener"
+          >
+            oficjalna deklaracja instytucji
+          </a>
+          (sprawdzenie: 18.10.2026). Ocena naszego interfejsu opiera się na wdrożonych funkcjach,
+          bez deklarowania przeprowadzonego audytu.
+        </p>
+      </div>
+    }
+  }
+</article>

@@ -1,0 +1,19 @@
+:host {
+  display: inline-flex;
+  flex-shrink: 0;
+  width: 54px;
+  height: 54px;
+}
+svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  mix-blend-mode: var(--brand-blend, multiply);
+  filter: var(--brand-filter, none);
+}

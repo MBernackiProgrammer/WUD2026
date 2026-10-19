@@ -1,0 +1,127 @@
+<section
+  class="container quiz-page"
+  aria-labelledby="quiz-title"
+>
+  <p class="eyebrow">TWOJA DROGA DO PIERWSZEGO KONCERTU</p>
+  <h1 id="quiz-title">Znajdź swoje brzmienie.</h1>
+  <p class="lead">Nie ma złych odpowiedzi. Jest muzyka, którą dopiero poznasz.</p>
+  @if (step() < totalSteps) {
+    <div class="quiz-layout">
+      <div class="quiz-aside">
+        <!-- Keep the separator whitespace inside the smaller text. -->
+        <!-- prettier-ignore -->
+        <span class="quiz-big-number">0{{ step() + 1 }}<small> / 0{{ totalSteps }}</small></span>
+        <p>
+          Chwila dla Ciebie.
+          <br />
+          Cały świat muzyki przed Tobą.
+        </p>
+        <p-progressbar
+          [value]="((step() + 1) / totalSteps) * 100"
+          [showValue]="false"
+          aria-label="Postęp kreatora"
+        />
+      </div>
+      <div class="quiz-question">
+        <p class="eyebrow">KROK {{ step() + 1 }} Z {{ totalSteps }}</p>
+        <h2
+          tabindex="-1"
+          id="question-heading"
+        >
+          {{ questions[step()].title }}
+        </h2>
+        <div
+          class="quiz-options"
+          role="group"
+          aria-labelledby="question-heading"
+        >
+          @for (option of questions[step()].options; track option) {
+            <button
+              pButton
+              [class.chosen]="answers()[step()] === option"
+              [attr.aria-pressed]="answers()[step()] === option"
+              (click)="choose(option)"
+              type="button"
+            >
+              {{ option }}
+              <app-icon [name]="answers()[step()] === option ? 'check' : 'arrow'" />
+            </button>
+          }
+        </div>
+        @if (step() === 0 && answers()[0] === 'Z dzieckiem') {
+          <label for="quiz-age">Ile lat ma dziecko?</label>
+          <p-inputnumber
+            inputId="quiz-age"
+            [min]="0"
+            [max]="17"
+            [useGrouping]="false"
+            [ngModel]="childAge()"
+            (ngModelChange)="childAge.set($event ?? 5)"
+          />
+        }
+        <div class="quiz-controls">
+          <button
+            pButton
+            class="text-link"
+            [disabled]="step() === 0"
+            (click)="move(-1)"
+            type="button"
+          >
+            <app-icon name="back" />
+            Wstecz
+          </button>
+          <button
+            pButton
+            class="text-link"
+            (click)="skip()"
+            type="button"
+          >
+            Pomiń
+          </button>
+          <button
+            pButton
+            class="button dark"
+            (click)="move(1)"
+            type="button"
+          >
+            {{ step() === totalSteps - 1 ? 'Pokaż propozycje' : 'Dalej' }}
+            <app-icon />
+          </button>
+        </div>
+      </div>
+    </div>
+  } @else {
+    <div class="quiz-results">
+      <p class="eyebrow">OTO TWOJE PROPOZYCJE</p>
+      <h2>
+        Być może to właśnie
+        <br />
+        Twój następny wieczór.
+      </h2>
+      <p role="status">Znalezione propozycje: {{ recommendations().length }}. {{ reason() }}</p>
+      <p class="demo-note">
+        Wyniki pochodzą z repertuaru demonstracyjnego. Nie wymagamy logowania.
+      </p>
+      <div class="event-grid">
+        @for (event of recommendations(); track event.id) {
+          <app-event-card [event]="event" />
+        }
+      </div>
+      @if (!recommendations().length) {
+        <div class="empty-state">
+          <h3>Nie ma jeszcze zgodnej propozycji.</h3>
+          <p>Zmień termin lub budżet. Nie poszerzamy Twoich kryteriów bez Twojej decyzji.</p>
+        </div>
+      }
+      <button
+        pButton
+        class="button outline"
+        (click)="step.set(0)"
+        type="button"
+      >
+        Zmień odpowiedzi
+        <app-icon name="back" />
+      </button>
+    </div>
+  }
+</section>

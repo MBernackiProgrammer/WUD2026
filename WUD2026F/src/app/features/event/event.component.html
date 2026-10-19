@@ -1,0 +1,646 @@
+@if (event(); as concert) {
+  <section
+    class="container event-page"
+    aria-labelledby="event-title"
+  >
+    <a
+      class="text-link back-link"
+      routerLink="/kalendarz"
+    >
+      <app-icon name="back" />
+      Wróć do kalendarza
+    </a>
+    <div class="event-content-layout">
+      <header class="event-overview">
+        <div class="event-summary">
+          <p class="eyebrow">
+            {{ concert.category }}
+            @if (details().collection?.season) {
+              · {{ details().collection?.season }}
+            }
+          </p>
+          <div class="event-title-row">
+            <img
+              class="event-thumbnail"
+              [src]="'/images/' + concert.image"
+              alt=""
+              width="104"
+              height="104"
+            />
+            <h1 id="event-title">{{ concert.title }}</h1>
+          </div>
+          <p class="lead">{{ concert.subtitle }}</p>
+          <dl class="event-facts">
+            <div>
+              <dt>
+                <app-icon name="calendar" />
+                Kiedy
+              </dt>
+              <dd>
+                {{ concert.date | date: 'dd.MM.yyyy' }}
+                @if (details().endDate) {
+                  – {{ details().endDate | date: 'dd.MM.yyyy' }}
+                }
+                · {{ concert.time }}
+              </dd>
+            </div>
+            <div>
+              <dt>
+                <app-icon name="pin" />
+                Gdzie
+              </dt>
+              <dd>{{ details().venue?.name || concert.room }}</dd>
+            </div>
+            <div>
+              <dt>
+                <app-icon name="user" />
+                Dla kogo
+              </dt>
+              <dd>
+                {{ concert.audience }}
+                @if (concert.age) {
+                  · {{ concert.age }}{{ details().ageMax ? '–' + details().ageMax : '+' }} lat
+                }
+              </dd>
+            </div>
+            <div>
+              <dt>
+                <app-icon name="clock" />
+                Czas trwania
+              </dt>
+              <dd>
+                {{ concert.duration !== null ? concert.duration + ' min' : 'Do potwierdzenia' }}
+                <small>
+                  {{
+                    details().intermissionMinutes === 0
+                      ? 'Bez przerwy'
+                      : details().intermissionMinutes != null
+                        ? 'Przerwa: ' + details().intermissionMinutes + ' min'
+                        : 'Przerwa: do potwierdzenia'
+                  }}
+                </small>
+              </dd>
+            </div>
+          </dl>
+        </div>
+      </header>
+      <aside
+        class="event-booking"
+        aria-label="Bilety i zapis wydarzenia"
+      >
+        <p class="eyebrow">{{ isPast() ? 'WYDARZENIE ARCHIWALNE' : 'ZAPLANUJ SWOJĄ WIZYTĘ' }}</p>
+        <div class="event-purchase">
+          @if (concert.price !== null) {
+            <p class="overview-price">
+              {{
+                concert.price === 0 && !details().priceMax
+                  ? 'Wstęp wolny'
+                  : 'od ' +
+                    concert.price +
+                    (details().priceMax != null ? ' do ' + details().priceMax : '') +
+                    ' zł'
+              }}
+            </p>
+          }
+          @if (!isPast() && tickets().canBuy) {
+            <a
+              pButton
+              class="button dark"
+              [href]="sellerUrl()"
+            >
+              KUP BILET
+              <app-icon name="ticket" />
+            </a>
+          } @else {
+            <button
+              pButton
+              type="button"
+              class="button dark"
+              disabled
+              aria-describedby="event-ticket-status"
+            >
+              KUP BILET
+              <app-icon name="ticket" />
+            </button>
+          }
+          <span
+            class="ticket-status"
+            id="event-ticket-status"
+          >
+            {{ isPast() ? 'Bilety niedostępne — wydarzenie już się odbyło' : tickets().label }}
+          </span>
+        </div>
+        <div class="event-utilities">
+          <button
+            pButton
+            type="button"
+            class="button outline"
+            (click)="calendarOpen.set(true)"
+          >
+            <app-icon name="calendar" />
+            Zapisz w kalendarzu
+          </button>
+          <button
+            pButton
+            type="button"
+            class="button outline"
+            (click)="share()"
+          >
+            <app-icon name="diagonal" />
+            Udostępnij
+          </button>
+          @if (store.canFavorite()) {
+            <button
+              pButton
+              type="button"
+              class="button outline"
+              [disabled]="store.savingFavorite()"
+              (click)="store.toggleFavorite(concert.id)"
+              [attr.aria-pressed]="store.favorites().includes(concert.id)"
+            >
+              <app-icon name="heart" />
+              {{ store.favorites().includes(concert.id) ? 'W ulubionych' : 'Ulubione' }}
+            </button>
+          }
+        </div>
+      </aside>
+      <nav
+        class="event-section-nav"
+        aria-label="Na tej stronie"
+      >
+        @if (descriptionParagraphs().length || whyAttend()) {
+          <a
+            [routerLink]="[]"
+            fragment="event-about"
+          >
+            O wydarzeniu
+          </a>
+        }
+        <a
+          [routerLink]="[]"
+          fragment="event-artists"
+        >
+          {{ isNonMusicalEvent() ? 'Twórcy' : 'Wykonawcy' }}
+        </a>
+        <a
+          [routerLink]="[]"
+          fragment="event-program"
+        >
+          Program
+        </a>
+        <a
+          [routerLink]="[]"
+          fragment="event-visit"
+        >
+          Przed wizytą
+        </a>
+        <a
+          [routerLink]="[]"
+          fragment="event-faq"
+        >
+          Pytania
+        </a>
+      </nav>
+      <div class="event-editorial detail-copy">
+        @if (whyAttend()) {
+          <section
+            class="event-highlight"
+            [attr.id]="descriptionParagraphs().length ? null : 'event-about'"
+          >
+            <h2>Dlaczego warto przyjść?</h2>
+            <p class="editorial-text">{{ whyAttend() }}</p>
+          </section>
+        }
+        @if (descriptionParagraphs().length) {
+          <section
+            id="event-about"
+            aria-labelledby="event-about-title"
+          >
+            <h2 id="event-about-title">O wydarzeniu</h2>
+            <div id="event-description">
+              @for (paragraph of visibleDescription(); track $index) {
+                <p class="editorial-text">{{ paragraph }}</p>
+              }
+            </div>
+            @if (descriptionParagraphs().length > 2) {
+              <button
+                pButton
+                type="button"
+                class="text-link description-toggle"
+                [attr.aria-expanded]="descriptionExpanded()"
+                aria-controls="event-description"
+                (click)="descriptionExpanded.set(!descriptionExpanded())"
+              >
+                {{ descriptionExpanded() ? 'Zwiń opis' : 'Czytaj więcej' }}
+                <app-icon [name]="descriptionExpanded() ? 'back' : 'arrow'" />
+              </button>
+            }
+          </section>
+        }
+
+        <section
+          id="event-artists"
+          aria-labelledby="event-artists-title"
+        >
+          <h2 id="event-artists-title">
+            {{ isNonMusicalEvent() ? 'Twórcy i prowadzący' : 'Kto występuje' }}
+          </h2>
+          <ul class="performer-list">
+            @for (artist of performers(); track artist.id) {
+              <li>
+                <a
+                  class="performer-profile-link"
+                  [routerLink]="['/artysta', artist.id]"
+                >
+                  <app-icon name="music" />
+                  <span>
+                    <strong>{{ artist.name }}</strong>
+                    @if (artist.role) {
+                      <span class="performer-role">· {{ artist.role }}</span>
+                    }
+                  </span>
+                  <app-icon
+                    name="arrow"
+                    class="performer-arrow"
+                  />
+                </a>
+              </li>
+            } @empty {
+              <li>Organizator nie opublikował jeszcze listy wykonawców.</li>
+            }
+          </ul>
+        </section>
+        <section
+          id="event-program"
+          aria-labelledby="event-program-title"
+        >
+          <h2 id="event-program-title">
+            {{ isNonMusicalEvent() ? 'Program wydarzenia' : 'Co zagramy' }}
+          </h2>
+          @if (details().works?.length) {
+            <ol class="program-list">
+              @for (w of details().works; track $index) {
+                <li>
+                  <strong>{{ w.composer }}</strong>
+                  · {{ w.title }}
+                  @if (w.duration) {
+                    <span>({{ w.duration }} min)</span>
+                  }
+                </li>
+              }
+            </ol>
+          } @else if (concert.program.length) {
+            <ol class="program-list">
+              @for (item of concert.program; track $index) {
+                <li>{{ item }}</li>
+              }
+            </ol>
+          } @else {
+            <p class="event-note">Organizator nie opublikował jeszcze szczegółowego programu.</p>
+          }
+          <app-wave-player />
+          @if (concert.sourceUrl) {
+            <p>
+              <a
+                class="text-link"
+                [href]="concert.sourceUrl"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Opis i materiały organizatora
+                <app-icon name="diagonal" />
+              </a>
+            </p>
+          }
+          @if (details().programUrl) {
+            <a
+              pButton
+              class="button outline"
+              [href]="details().programUrl"
+              target="_blank"
+              rel="noopener"
+            >
+              Pobierz program koncertu
+              <app-icon name="diagonal" />
+            </a>
+          }
+        </section>
+        @if (details().collection; as c) {
+          @if (c.name) {
+            <section>
+              <h2>{{ c.name }}</h2>
+              @if (c.season) {
+                <p class="small-note">Sezon {{ c.season }}</p>
+              }
+              <p>{{ c.description }}</p>
+              @if (c.passes) {
+                <h3>Karnety</h3>
+                <p>{{ c.passes }}</p>
+              }
+              @if (c.passUrl) {
+                <a
+                  class="button dark"
+                  pButton
+                  [href]="c.passUrl"
+                >
+                  Sprawdź karnety
+                  <app-icon name="ticket" />
+                </a>
+              }
+            </section>
+          }
+        }
+        @if (details().type === 'exhibition') {
+          @if (details().exhibition; as x) {
+            <section>
+              <h2>{{ x.title || 'Wystawa' }}</h2>
+              <p>
+                {{ x.gallery }} · {{ concert.date | date: 'dd.MM.yyyy' }}
+                @if (details().endDate) {
+                  – {{ details().endDate | date: 'dd.MM.yyyy' }}
+                }
+              </p>
+              @if (x.artists) {
+                <p>Artyści: {{ x.artists }}</p>
+              }
+              @if (x.curator) {
+                <p>Kurator: {{ x.curator }}</p>
+              }
+              @if (x.openingAt) {
+                <p>Wernisaż: {{ x.openingAt | date: 'dd.MM.yyyy, HH:mm' }}</p>
+              }
+              <div class="exhibition-gallery">
+                @for (photo of x.photos ?? []; track photo) {
+                  <a
+                    [href]="photo"
+                    target="_blank"
+                    rel="noopener"
+                  >
+                    <img
+                      [src]="photo"
+                      [alt]="x.title || concert.title"
+                      loading="lazy"
+                    />
+                  </a>
+                }
+              </div>
+            </section>
+          }
+        }
+        @if (details().education; as e) {
+          @if (e.group || e.benefits || e.registration) {
+            <section>
+              <h2>Dla uczestników</h2>
+              <p>
+                {{ e.group }}
+                @if (e.age) {
+                  · {{ e.age }}
+                }
+              </p>
+              @if (e.benefits) {
+                <h3>Co zyskasz?</h3>
+                <p>{{ e.benefits }}</p>
+              }
+              @if (e.registration) {
+                <h3>Jak się zapisać?</h3>
+                <p>{{ e.registration }}</p>
+              }
+              @if (e.registrationUrl) {
+                <a
+                  pButton
+                  class="button dark"
+                  [href]="e.registrationUrl"
+                >
+                  Zapisz się
+                  <app-icon name="arrow" />
+                </a>
+              }
+            </section>
+          }
+        }
+        <section
+          id="event-visit"
+          class="event-practical"
+          aria-labelledby="event-visit-title"
+        >
+          <h2 id="event-visit-title">Przed wizytą</h2>
+          <p-accordion [value]="[]">
+            <p-accordion-panel value="accessibility">
+              <p-accordion-header>
+                <span>Dostępność i informacje sensoryczne</span>
+              </p-accordion-header>
+              <p-accordion-content>
+                <p>
+                  {{
+                    details().accessibilityNotes ||
+                      'Udogodnienia dla tego wydarzenia nie zostały jeszcze potwierdzone. Skontaktuj się z obsługą przed wizytą.'
+                  }}
+                </p>
+                @if (details().venue?.accessibility) {
+                  <p>{{ details().venue?.accessibility }}</p>
+                }
+                @if (details().sensoryNotes) {
+                  <h3>Warunki sensoryczne</h3>
+                  <p>{{ details().sensoryNotes }}</p>
+                }
+              </p-accordion-content>
+            </p-accordion-panel>
+          </p-accordion>
+        </section>
+        <section class="event-directions">
+          <h2>Jak dotrzeć?</h2>
+          <h3>
+            {{ details().venue?.name || concert.room }}
+            @if (details().venue?.number) {
+              · {{ details().venue?.number }}
+            }
+          </h3>
+          <p>{{ address() }}</p>
+          @if (details().venue?.directions) {
+            <p>{{ details().venue?.directions }}</p>
+          }
+          <div class="event-utilities">
+            <a
+              pButton
+              class="button dark"
+              [href]="mapsUrl()"
+              target="_blank"
+              rel="noopener"
+            >
+              Wyznacz trasę
+              <app-icon name="pin" />
+            </a>
+            @if (details().venue?.planUrl) {
+              <a
+                pButton
+                class="button outline"
+                [href]="details().venue?.planUrl"
+                target="_blank"
+                rel="noopener"
+              >
+                Plan sali
+                <app-icon name="diagonal" />
+              </a>
+            }
+          </div>
+        </section>
+        @if (details().articles?.length) {
+          <section>
+            <h2>Przeczytaj przed wizytą</h2>
+            @for (a of details().articles; track a.id) {
+              <p>
+                <a
+                  class="text-link"
+                  [routerLink]="['/artykul', a.id]"
+                >
+                  {{ a.title }}
+                  <app-icon name="arrow" />
+                </a>
+              </p>
+            }
+          </section>
+        }
+        <section
+          id="event-faq"
+          aria-labelledby="event-faq-title"
+        >
+          <h2 id="event-faq-title">Często zadawane pytania</h2>
+          <p-accordion
+            [multiple]="true"
+            [value]="[]"
+          >
+            @for (f of details().faqs ?? []; track $index) {
+              <p-accordion-panel [value]="'' + $index">
+                <p-accordion-header>{{ f.question }}</p-accordion-header>
+                <p-accordion-content>
+                  @if (f.category) {
+                    <p class="eyebrow">{{ f.category }}</p>
+                  }
+                  <p>{{ f.answer }}</p>
+                </p-accordion-content>
+              </p-accordion-panel>
+            } @empty {
+              <p-accordion-panel value="visit">
+                <p-accordion-header>Pierwszy raz w Filharmonii?</p-accordion-header>
+                <p-accordion-content>
+                  <a
+                    class="text-link"
+                    routerLink="/wizyta"
+                  >
+                    Sprawdź informacje przed wizytą
+                    <app-icon name="arrow" />
+                  </a>
+                </p-accordion-content>
+              </p-accordion-panel>
+            }
+          </p-accordion>
+        </section>
+        <section class="event-contact">
+          <h2>Potrzebujesz pomocy?</h2>
+          <p>Biuro i obsługa Filharmonii pomogą Ci przygotować wizytę.</p>
+          <p>
+            <a
+              class="text-link"
+              href="tel:+48539949454"
+            >
+              Zadzwoń na infolinię: +48 539 949 454
+            </a>
+            <br />
+            <small>Wtorek–czwartek, 10:00–16:00</small>
+          </p>
+          <a
+            class="text-link"
+            href="https://filharmonia.szczecin.pl/kontakt"
+            target="_blank"
+            rel="noopener"
+          >
+            Skontaktuj się z Filharmonią
+            <app-icon name="diagonal" />
+          </a>
+        </section>
+      </div>
+    </div>
+    @if (similar().length) {
+      <section class="section">
+        <h2>Może Cię również zainteresować</h2>
+        <div class="event-grid">
+          @for (e of similar(); track e.id) {
+            <app-event-card [event]="e" />
+          }
+        </div>
+      </section>
+    }
+  </section>
+  <p-dialog
+    header="Zapisz w kalendarzu"
+    [visible]="calendarOpen()"
+    (visibleChange)="calendarOpen.set($event)"
+    [modal]="true"
+    appendTo="body"
+    [style]="{ width: 'min(92vw,440px)' }"
+  >
+    <div class="calendar-options">
+      <a
+        pButton
+        class="button outline full"
+        [href]="googleCalendar(concert)"
+        target="_blank"
+        rel="noopener"
+      >
+        Google Calendar
+        <app-icon name="calendar" />
+      </a>
+      <a
+        pButton
+        class="button outline full"
+        [href]="calendarFile(concert)"
+      >
+        Apple Calendar · ICS
+        <app-icon name="calendar" />
+      </a>
+      <a
+        pButton
+        class="button outline full"
+        [href]="calendarFile(concert)"
+      >
+        Outlook · ICS
+        <app-icon name="calendar" />
+      </a>
+    </div>
+  </p-dialog>
+  <p-dialog
+    header="Udostępnij wydarzenie"
+    [visible]="shareOpen()"
+    (visibleChange)="shareOpen.set($event)"
+    [modal]="true"
+    appendTo="body"
+    [style]="{ width: 'min(92vw,440px)' }"
+  >
+    <label for="share-event-link">Link do wydarzenia</label>
+    <input
+      id="share-event-link"
+      class="share-link"
+      [value]="sharedUrl()"
+      readonly
+    />
+    <button
+      pButton
+      class="button dark"
+      (click)="copyLink()"
+      type="button"
+    >
+      Kopiuj link
+    </button>
+  </p-dialog>
+} @else {
+  <section class="container empty-state">
+    <h1>Nie znaleźliśmy tego wydarzenia.</h1>
+    <a
+      pButton
+      class="button dark"
+      routerLink="/kalendarz"
+    >
+      Zobacz kalendarz
+    </a>
+  </section>
+}

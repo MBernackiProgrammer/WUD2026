@@ -1,0 +1,25 @@
+/* pages / visit */
+.visit-layout {
+  display: grid;
+  gap: 30px;
+}
+.visit-layout > img {
+  width: 100%;
+  height: auto;
+}
+.visit-layout > div {
+  padding: 20px 0;
+}
+.visit-layout > div > p:not(.eyebrow) {
+  color: var(--muted);
+  font-size: 14px;
+}
+.visit-layout .button {
+  margin: 14px 0;
+}
+.visit-faq {
+  max-width: 860px;
+}
+.visit-faq > h2 {
+  margin-bottom: 36px;
+}

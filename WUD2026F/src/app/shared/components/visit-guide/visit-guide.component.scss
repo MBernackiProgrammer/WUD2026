@@ -1,0 +1,124 @@
+:host {
+  display: block;
+}
+.visit-guide {
+  padding-block: 48px;
+  border-top: 1px solid var(--line);
+  scroll-margin-top: 160px;
+}
+.visit-guide > header {
+  max-width: 760px;
+  margin-bottom: 32px;
+}
+.visit-guide h2 {
+  font-size: clamp(28px, 3vw, 40px);
+  font-weight: 500;
+  line-height: 1.2;
+}
+.visit-guide p {
+  line-height: 1.8;
+  color: var(--muted);
+}
+.visit-guide a {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  color: var(--gold-dark);
+}
+.practical-questions {
+  border-top: 1px solid var(--line);
+}
+details {
+  padding: 20px 0;
+  border-bottom: 1px solid var(--line);
+}
+summary {
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  line-height: 1.5;
+  min-height: 28px;
+}
+details p {
+  max-width: 78ch;
+  margin-bottom: 12px;
+}
+.visit-orientation {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 32px;
+  margin-top: 48px;
+}
+.visit-orientation h3 {
+  font-size: 24px;
+  font-weight: 500;
+  margin: 0 0 20px;
+}
+.visit-orientation iframe {
+  width: 100%;
+  height: 360px;
+  border: 1px solid var(--line);
+  display: block;
+  margin-bottom: 20px;
+}
+.visit-orientation .text-link {
+  gap: 12px;
+}
+.visit-orientation app-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  color: var(--gold-dark);
+}
+.plan-note,
+.practical-sources {
+  font-size: 13px;
+}
+.floor-directory {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+  border: 1px solid var(--line);
+}
+.floor-directory li {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  border-bottom: 1px solid var(--line);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.floor-directory li:last-child {
+  border: 0;
+}
+.floor-directory strong {
+  font-size: 21px;
+  color: var(--gold-dark);
+  min-width: 32px;
+  text-align: center;
+}
+.floor-directory span {
+  flex: 1;
+}
+.floor-directory .entry-floor {
+  background: var(--warm);
+}
+.practical-sources {
+  margin-top: 32px;
+}
+summary:focus-visible {
+  outline: 3px solid var(--gold-dark);
+  outline-offset: 4px;
+}
+@media (max-width: 767px) {
+  .visit-orientation {
+    grid-template-columns: 1fr;
+  }
+  .visit-guide {
+    padding-block: 32px;
+    scroll-margin-top: 80px;
+  }
+  .visit-orientation iframe {
+    height: 280px;
+  }
+}

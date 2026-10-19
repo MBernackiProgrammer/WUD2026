@@ -1,0 +1,229 @@
+<section
+  class="architecture-hero"
+  aria-labelledby="discover-title"
+>
+  <img
+    src="/images/building-3-large.webp"
+    alt="Charakterystyczna bryła Filharmonii zaprojektowana przez Barozzi/Veiga"
+    width="800"
+    height="587"
+  />
+  <div class="container">
+    <p class="eyebrow">ODKRYJ FILHARMONIĘ</p>
+    <h1 id="discover-title">
+      O Filharmonii.
+      <br />
+      Muzyka i miejsce.
+    </h1>
+  </div>
+</section>
+<nav
+  class="container discover-sections"
+  aria-label="Poznaj Filharmonię"
+>
+  <a
+    routerLink="/odkryj"
+    fragment="orkiestra"
+  >
+    Orkiestra i artyści
+  </a>
+  <a
+    routerLink="/odkryj"
+    fragment="budynek"
+  >
+    Budynek
+  </a>
+  <a
+    routerLink="/odkryj"
+    fragment="historia"
+  >
+    Historia
+  </a>
+  <a
+    routerLink="/odkryj"
+    fragment="wystawy"
+  >
+    Wystawy
+  </a>
+  <a
+    routerLink="/odkryj"
+    fragment="przed-wizyta"
+  >
+    Przed wizytą
+  </a>
+  <a
+    routerLink="/odkryj"
+    fragment="zwiedzanie"
+  >
+    Zwiedzanie
+  </a>
+</nav>
+<section
+  class="container section architecture-copy"
+  id="budynek"
+>
+  <p class="eyebrow">BIAŁA BRYŁA. ZŁOTE SERCE.</p>
+  <h2>Architektura spotyka muzykę.</h2>
+  <p>
+    Projekt studia Barozzi/Veiga łączy odważną, jasną bryłę z przestrzenią stworzoną do słuchania.
+    Od otwartego foyer, przez kameralne spotkania, aż po Salę Symfoniczną — odkryj Filharmonię od
+    środka.
+  </p>
+  <div class="architecture-facts">
+    <div>
+      <strong>953</strong>
+      <span>miejsca w Sali Symfonicznej</span>
+    </div>
+    <div>
+      <strong>192</strong>
+      <span>miejsca w Sali Kameralnej</span>
+    </div>
+    <div>
+      <strong>2014</strong>
+      <span>otwarcie nowej siedziby</span>
+    </div>
+  </div>
+  <a
+    pButton
+    class="button dark"
+    routerLink="/kalendarz"
+    [queryParams]="{ category: 'Zwiedzanie' }"
+  >
+    Znajdź termin zwiedzania
+    <app-icon />
+  </a>
+  <a
+    class="text-link source-link"
+    routerLink="/budynek"
+  >
+    Poznaj architekturę Filharmonii
+    <app-icon name="diagonal" />
+  </a>
+  <img
+    class="architecture-hall"
+    src="/images/building-28.jpg"
+    alt="Złota Sala Symfoniczna"
+    loading="lazy"
+    width="800"
+    height="533"
+  />
+</section>
+<section
+  class="container discover-detail"
+  id="orkiestra"
+>
+  <p class="eyebrow">ORKIESTRA I ARTYŚCI</p>
+  <h2>Ludzie, którzy nadają temu miejscu brzmienie.</h2>
+  <p>
+    Orkiestra Symfoniczna Filharmonii w Szczecinie powstała w 1948 roku. Zespół tworzy ponad 90
+    muzyków. Występował między innymi w berlińskim Konzerthausie i Filharmonii Berlińskiej,
+    współpracując z solistami takimi jak Krystian Zimerman, Mischa Maisky czy Bomsori Kim.
+  </p>
+  <p>
+    Dyrektorem Naczelnym i Artystycznym jest Przemysław Neumann. W 2023 roku orkiestra otrzymała
+    Złoty Medal Zasłużony Kulturze Gloria Artis. Jej nagrania przybliżają między innymi twórczość
+    patrona — Mieczysława Karłowicza.
+  </p>
+  <a
+    class="text-link"
+    routerLink="/orkiestra"
+  >
+    Poznaj pełny skład orkiestry
+    <app-icon name="diagonal" />
+  </a>
+  @if (artists().length) {
+    <h3>Artyści naszego programu</h3>
+    <div class="discover-artists">
+      @for (artist of artists(); track artist.id) {
+        <a [routerLink]="['/artysta', artist.id]">
+          <app-icon name="music" />
+          <span>
+            {{ artist.name }}
+            <small>{{ artist.role }}</small>
+          </span>
+          <app-icon name="arrow" />
+        </a>
+      }
+    </div>
+  }
+</section>
+<section
+  class="container discover-detail"
+  id="historia"
+>
+  <p class="eyebrow">HISTORIA</p>
+  <h2>Kolejne pokolenia. Ta sama ciekawość muzyki.</h2>
+  <ol class="discover-timeline">
+    <li>
+      <strong>1948</strong>
+      <p>
+        Powstaje szczecińska orkiestra symfoniczna. Rozpoczyna się historia wspólnego słuchania, do
+        której dopisujemy kolejne koncerty.
+      </p>
+    </li>
+    <li>
+      <strong>2014</strong>
+      <p>
+        Nowa siedziba przy Małopolskiej otwiera drzwi wraz z sezonem 2014/2015. Projekt
+        Barozzi/Veiga powstaje w miejscu dawnego Domu Koncertowego.
+      </p>
+    </li>
+    <li>
+      <strong>Dziś</strong>
+      <p>
+        Koncerty, edukacja, sztuki wizualne i spotkania tworzą otwartą przestrzeń dla mieszkańców i
+        gości Szczecina.
+      </p>
+    </li>
+  </ol>
+  <a
+    class="text-link"
+    routerLink="/historia"
+  >
+    Poznaj historię Filharmonii
+    <app-icon name="diagonal" />
+  </a>
+</section>
+<div class="container discover-pair">
+  <section id="wystawy">
+    <app-icon name="spark" />
+    <h2>Wystawy</h2>
+    <p>
+      Muzyka spotyka się tutaj ze sztuką wizualną. Zajrzyj do galerii i sprawdź aktualne wystawy
+      oraz terminy wernisaży.
+    </p>
+    <a
+      class="button outline"
+      routerLink="/kalendarz"
+      [queryParams]="{ category: 'Wystawy' }"
+    >
+      Zobacz wystawy
+      <app-icon name="arrow" />
+    </a>
+  </section>
+  <section id="zwiedzanie">
+    <app-icon name="home" />
+    <h2>Zwiedzanie</h2>
+    <p>
+      Poznaj Filharmonię od środka: przestrzenie, detale i architekturę stworzoną dla muzyki.
+      Wybierz termin w kalendarzu lub zapytaj o wizytę grupową.
+    </p>
+    <a
+      class="button outline"
+      routerLink="/kalendarz"
+      [queryParams]="{ category: 'Zwiedzanie' }"
+    >
+      Terminy zwiedzania
+      <app-icon name="arrow" />
+    </a>
+    <a
+      class="text-link"
+      href="mailto:zwiedzanie@filharmonia.szczecin.pl"
+    >
+      Zwiedzanie z grupą
+      <app-icon name="mail" />
+    </a>
+  </section>
+</div>
+
+<div class="container"><app-visit-guide /></div>

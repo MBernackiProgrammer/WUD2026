@@ -1,0 +1,162 @@
+/* footer navigation */
+.site-footer {
+  background: var(--ink);
+  color: #f6f4ef;
+  padding: 54px 20px 110px;
+}
+.footer-top {
+  max-width: var(--max);
+  margin: auto;
+  display: grid;
+  gap: 34px;
+}
+.footer-wordmark {
+  font-size: 36px;
+  letter-spacing: -0.04em;
+  line-height: 1.15;
+}
+.footer-wordmark span {
+  color: var(--gold);
+}
+.footer-logo {
+  display: block;
+  width: auto;
+  height: 140px;
+  object-fit: contain;
+  filter: invert(1);
+  mix-blend-mode: screen;
+}
+.footer-links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+.footer-links a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 44px;
+  padding-block: 10px;
+  font-size: 15px;
+  color: #f6f4ef;
+  border-bottom: 1px solid #ffffff26;
+}
+.footer-links a:hover {
+  color: var(--gold);
+}
+.footer-links app-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+.footer-top .eyebrow {
+  font-size: 9px;
+  color: var(--gold);
+  margin-bottom: 20px;
+}
+.footer-top p:not(.eyebrow) {
+  font-size: 13px;
+  color: #c9c6bf;
+  line-height: 1.9;
+}
+.footer-top > div > a {
+  display: block;
+  font-size: 12px;
+  color: #d8d5ce;
+  min-height: 34px;
+}
+.footer-bottom {
+  max-width: var(--max);
+  margin: 44px auto 0;
+  padding-top: 22px;
+  border-top: 1px solid #ffffff26;
+  color: #a5a19b;
+  font-size: 10px;
+  line-height: 1.8;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+.footer-bottom > div {
+  display: flex;
+  gap: 24px;
+}
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  min-height: 72px;
+  padding: 7px 5px calc(7px + env(safe-area-inset-bottom));
+  background: #fff;
+  border-top: 1px solid var(--line);
+  z-index: 40;
+  box-shadow: 0 -3px 16px #00000006;
+}
+.bottom-nav a {
+  min-height: 50px;
+  min-width: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 5px;
+  color: #666;
+  font-size: 9px;
+  position: relative;
+}
+.bottom-nav a.active {
+  color: var(--ink);
+}
+.bottom-nav a.active:before {
+  content: '';
+  height: 2px;
+  width: 22px;
+  background: var(--gold-dark);
+  position: absolute;
+  top: 0;
+}
+.bottom-nav app-icon {
+  height: 20px;
+  width: 20px;
+}
+/* Inner pages */
+
+.bottom-nav a {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+}
+.bottom-nav .calendar-nav {
+  color: var(--ink);
+  font-weight: 700;
+  justify-content: flex-end;
+}
+.bottom-nav .calendar-nav app-icon {
+  position: absolute;
+  left: 50%;
+  bottom: 14px;
+  transform: translateX(-50%);
+  width: 64px;
+  height: 64px;
+  padding: 12px;
+  box-sizing: border-box;
+  border: 4px solid #fff;
+  border-radius: 22px;
+  background: var(--ink);
+  color: var(--gold);
+  box-shadow: 0 -4px 14px #00000012;
+}
+.bottom-nav .calendar-nav.active app-icon {
+  background: var(--ink);
+  color: var(--gold);
+}
+.bottom-nav .calendar-nav.active::before {
+  display: none;
+}

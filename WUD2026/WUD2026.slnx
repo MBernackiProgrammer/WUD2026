@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="WUD2026.IntegrationTests/WUD2026.IntegrationTests.csproj" />
+  <Project Path="WUD2026/WUD2026.csproj" />
+</Solution>

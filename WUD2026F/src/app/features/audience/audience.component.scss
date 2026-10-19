@@ -1,0 +1,112 @@
+:host {
+  display: block;
+  padding-bottom: 64px;
+}
+.audience-hero {
+  display: grid;
+  gap: 32px;
+  align-items: center;
+  padding-block: 44px;
+}
+.audience-hero h1 {
+  font-size: clamp(34px, 4vw, 58px);
+  max-width: 16ch;
+}
+.audience-lead {
+  font-size: 17px;
+  color: var(--muted);
+  max-width: 55ch;
+  margin-bottom: 28px;
+}
+.audience-hero img {
+  width: 100%;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+  border-radius: 16px;
+}
+.eyebrow {
+  color: var(--gold-dark);
+  font-size: 11px;
+  letter-spacing: 0.13em;
+}
+.audience-cards {
+  display: grid;
+  gap: 20px;
+  padding-block: 16px 40px;
+}
+.audience-cards article {
+  padding: 28px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.audience-cards article > app-icon {
+  width: 30px;
+  height: 30px;
+  color: var(--gold-dark);
+  margin-bottom: 24px;
+}
+h2 {
+  font-size: 28px;
+}
+.audience-cards p {
+  font-size: 15px;
+  color: var(--muted);
+}
+.audience-cards .text-link {
+  margin-top: auto;
+  font-size: 13px;
+  min-height: 44px;
+}
+.audience-contact {
+  padding: 32px;
+  background: var(--warm);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+.audience-contact > div {
+  flex: 1;
+}
+.audience-contact p:last-child {
+  margin: 0;
+  max-width: 65ch;
+  font-size: 15px;
+  color: var(--muted);
+}
+.audience-contact .button {
+  flex-shrink: 0;
+}
+.audience-source {
+  margin-top: 24px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.audience-source a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+@media (min-width: 1024px) {
+  .audience-hero {
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+  }
+  .audience-cards {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (max-width: 767px) {
+  .audience-contact {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .audience-contact .button {
+    width: 100%;
+  }
+  .audience-hero {
+    padding-top: 28px;
+  }
+}

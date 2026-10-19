@@ -1,0 +1,800 @@
+<section
+  class="container page-intro"
+  aria-labelledby="account-title"
+>
+  <p class="eyebrow">TWOJE MIEJSCE W FILHARMONII</p>
+  <h1 id="account-title">Konto Filharmonii Szczecińskiej</h1>
+  <p>Twoje wizyty, ulubione wydarzenia i ustawienia — w jednym miejscu.</p>
+</section>
+<section
+  class="container account-section"
+  [attr.aria-busy]="busy() || account.loading()"
+>
+  @if (error()) {
+    <p
+      class="account-message error"
+      role="alert"
+    >
+      {{ error() }}
+    </p>
+  }
+  @if (notice()) {
+    <p
+      class="account-message"
+      role="status"
+    >
+      {{ notice() }}
+    </p>
+  }
+  @if (account.loading()) {
+    <p role="status">Wczytuję Twoje konto…</p>
+  } @else if (!account.available()) {
+    <div class="account-panel">
+      <h2>Nie możemy teraz wczytać konta.</h2>
+      <button
+        pButton
+        class="button outline"
+        (click)="run(account.refresh.bind(account))"
+        [disabled]="busy()"
+      >
+        Spróbuj ponownie
+      </button>
+    </div>
+  } @else if (!account.user() || mode() === 'reset') {
+    <div class="account-access">
+      <div class="account-panel">
+        <nav
+          class="account-tabs"
+          aria-label="Dostęp do konta"
+        >
+          <button
+            pButton
+            type="button"
+            [class.selected]="mode() === 'login'"
+            (click)="mode.set('login')"
+          >
+            Zaloguj się
+          </button>
+          <button
+            pButton
+            type="button"
+            [class.selected]="mode() === 'register'"
+            (click)="mode.set('register')"
+          >
+            Załóż konto
+          </button>
+        </nav>
+        <h2>
+          {{
+            mode() === 'register'
+              ? 'Dołącz do melomanów'
+              : mode() === 'forgot'
+                ? 'Odzyskaj dostęp'
+                : mode() === 'reset'
+                  ? 'Ustaw nowe hasło'
+                  : 'Dobrze Cię widzieć'
+          }}
+        </h2>
+        <form
+          (ngSubmit)="submitAccess()"
+          class="account-form"
+        >
+          <label for="account-email">Adres e-mail</label>
+          <input
+            pInputText
+            id="account-email"
+            name="email"
+            type="email"
+            autocomplete="email"
+            [(ngModel)]="email"
+            required
+            maxlength="254"
+          />
+          @if (mode() === 'register') {
+            <label for="account-name">Jak mamy się do Ciebie zwracać?</label>
+            <input
+              pInputText
+              id="account-name"
+              name="displayName"
+              autocomplete="name"
+              [(ngModel)]="displayName"
+              required
+              maxlength="100"
+            />
+            <label for="account-type">Rodzaj konta</label>
+            <p-select
+              inputId="account-type"
+              ariaLabel="Rodzaj konta"
+              name="accountType"
+              [(ngModel)]="accountType"
+              [options]="registrationRoles"
+              optionLabel="label"
+              optionValue="value"
+              appendTo="body"
+            />
+            @if (accountType === 'School') {
+              <label for="school-name">Nazwa szkoły</label>
+              <input
+                pInputText
+                id="school-name"
+                name="schoolName"
+                [(ngModel)]="schoolName"
+                required
+                maxlength="200"
+              />
+            }
+          }
+          @if (mode() !== 'forgot') {
+            <label for="account-password">{{ mode() === 'reset' ? 'Nowe hasło' : 'Hasło' }}</label>
+            <input
+              pInputText
+              id="account-password"
+              name="password"
+              type="password"
+              [autocomplete]="mode() === 'login' ? 'current-password' : 'new-password'"
+              [(ngModel)]="password"
+              [attr.aria-describedby]="
+                mode() === 'register' || mode() === 'reset' ? 'password-requirements' : null
+              "
+              required
+              maxlength="128"
+            />
+            @if (mode() === 'register' || mode() === 'reset') {
+              <app-password-requirements
+                id="password-requirements"
+                [password]="password"
+              />
+              <label for="account-repeat">Powtórz hasło</label>
+              <input
+                pInputText
+                id="account-repeat"
+                name="passwordAgain"
+                type="password"
+                autocomplete="new-password"
+                [(ngModel)]="passwordAgain"
+                required
+                maxlength="128"
+              />
+            }
+          }
+          @if (mode() === 'login') {
+            <div
+              class="account-social-icons"
+              role="group"
+              aria-label="Zaloguj się przez"
+            >
+              @for (provider of account.providers(); track provider.name) {
+                <button
+                  pButton
+                  type="button"
+                  class="account-social-button"
+                  [attr.aria-label]="'Zaloguj się przez ' + provider.name"
+                  [title]="
+                    provider.configured
+                      ? 'Zaloguj się przez ' + provider.name
+                      : provider.name + ' — logowanie chwilowo niedostępne'
+                  "
+                  [disabled]="busy() || !provider.configured"
+                  (click)="external(provider.name)"
+                >
+                  <app-provider-icon [name]="provider.name" />
+                </button>
+              }
+            </div>
+            <div class="account-check">
+              <p-checkbox
+                inputId="remember-me"
+                [binary]="true"
+                name="rememberMe"
+                [(ngModel)]="rememberMe"
+              />
+              <label for="remember-me">Zapamiętaj mnie</label>
+            </div>
+          }
+          <button
+            pButton
+            class="button dark"
+            type="submit"
+            [disabled]="busy()"
+          >
+            {{
+              busy()
+                ? 'Proszę czekać…'
+                : mode() === 'register'
+                  ? 'Utwórz konto'
+                  : mode() === 'forgot'
+                    ? 'Wyślij instrukcję'
+                    : mode() === 'reset'
+                      ? 'Zapisz nowe hasło'
+                      : 'Zaloguj się'
+            }}
+          </button>
+        </form>
+        @if (mode() === 'login') {
+          <button
+            pButton
+            class="account-text-button"
+            (click)="mode.set('forgot')"
+            [disabled]="!account.emailEnabled()"
+          >
+            Nie pamiętam hasła
+          </button>
+          @if (account.emailEnabled()) {
+            <button
+              pButton
+              class="account-text-button"
+              (click)="resendConfirmation()"
+              [disabled]="busy() || !email"
+            >
+              Wyślij ponownie potwierdzenie e-mail
+            </button>
+          }
+        }
+        @if (!account.emailEnabled() && mode() === 'forgot') {
+          <p class="account-hint">
+            Odzyskiwanie hasła jest chwilowo niedostępne. Skontaktuj się z Filharmonią.
+          </p>
+        }
+      </div>
+    </div>
+  } @else {
+    @if (account.user(); as user) {
+      <div class="account-summary">
+        <div>
+          <h2>Witaj, {{ user.displayName }}.</h2>
+          <p>{{ user.email }} · {{ roleLabel(user.roles[0] || 'User') }}</p>
+        </div>
+        <button
+          pButton
+          class="button outline"
+          (click)="logout()"
+          [disabled]="busy()"
+        >
+          Wyloguj się
+        </button>
+      </div>
+      <nav
+        class="account-tabs"
+        aria-label="Zarządzanie kontem"
+      >
+        <button
+          pButton
+          type="button"
+          [class.selected]="tab() === 'tickets'"
+          (click)="tab.set('tickets')"
+        >
+          Moje bilety
+        </button>
+        <button
+          pButton
+          type="button"
+          [class.selected]="tab() === 'history'"
+          (click)="tab.set('history')"
+        >
+          Historia zakupów
+        </button>
+        <button
+          pButton
+          type="button"
+          [class.selected]="tab() === 'notifications'"
+          (click)="tab.set('notifications')"
+        >
+          Powiadomienia
+        </button>
+        <button
+          pButton
+          [class.selected]="tab() === 'profile'"
+          (click)="tab.set('profile')"
+        >
+          Moje dane
+        </button>
+        <button
+          pButton
+          [class.selected]="tab() === 'security'"
+          (click)="tab.set('security')"
+        >
+          Bezpieczeństwo
+        </button>
+        <button
+          pButton
+          [class.selected]="tab() === 'favorites'"
+          (click)="tab.set('favorites')"
+        >
+          Ulubione
+        </button>
+        @if (admin()) {
+          <button
+            pButton
+            [class.selected]="tab() === 'users'"
+            (click)="loadUsers()"
+            [disabled]="busy()"
+          >
+            Użytkownicy
+          </button>
+        }
+      </nav>
+      @if (tab() === 'tickets') {
+        <section
+          class="account-panel"
+          aria-labelledby="tickets-title"
+        >
+          <h2 id="tickets-title">Nadchodzące wizyty</h2>
+          @if (discovery.exampleTicket(); as ticket) {
+            <app-ticket-preview [event]="ticket" />
+          } @else {
+            <p>Nie ma obecnie nadchodzących wydarzeń do podglądu.</p>
+          }
+        </section>
+      }
+      @if (tab() === 'history') {
+        <section
+          class="account-panel"
+          aria-labelledby="history-title"
+        >
+          <h2 id="history-title">Historia zakupów</h2>
+          <p>Nie ma jeszcze zakupów powiązanych z tym kontem.</p>
+          <a
+            class="text-link"
+            routerLink="/kalendarz"
+          >
+            Znajdź kolejne wydarzenie
+            <app-icon name="arrow" />
+          </a>
+        </section>
+      }
+      @if (tab() === 'notifications') {
+        <section
+          class="account-panel"
+          aria-labelledby="notifications-title"
+        >
+          <h2 id="notifications-title">Powiadomienia</h2>
+          <p>Nadchodzące wydarzenia z Twoich ulubionych.</p>
+          @if (notifications().length) {
+            <button
+              class="text-link"
+              type="button"
+              (click)="markNotificationsRead()"
+            >
+              Oznacz jako przeczytane
+              <app-icon name="check" />
+            </button>
+            <ul class="account-notifications">
+              @for (event of notifications(); track event.id) {
+                <li [class.notification-read]="readNotifications().includes(event.id)">
+                  <app-icon name="calendar" />
+                  <div>
+                    <strong>
+                      {{
+                        readNotifications().includes(event.id)
+                          ? 'Zapisane w ulubionych'
+                          : 'Przed Tobą'
+                      }}
+                    </strong>
+                    <a [routerLink]="['/wydarzenie', event.id]">{{ event.title }}</a>
+                    <span>{{ event.date }} · {{ event.time }} · {{ event.room }}</span>
+                  </div>
+                </li>
+              }
+            </ul>
+          } @else {
+            <p>Nie masz nowych powiadomień. Zapisz interesujące Cię wydarzenia serduszkiem.</p>
+          }
+        </section>
+      }
+      @if (tab() === 'profile') {
+        <div class="account-panel">
+          <h2>Twoje dane</h2>
+          <form
+            class="account-form"
+            (ngSubmit)="saveProfile()"
+          >
+            <label for="profile-name">Imię lub nazwa</label>
+            <input
+              pInputText
+              id="profile-name"
+              name="displayName"
+              [(ngModel)]="profile.displayName"
+              required
+              maxlength="100"
+              autocomplete="name"
+            />
+            <label for="profile-phone">Telefon (opcjonalnie)</label>
+            <input
+              pInputText
+              id="profile-phone"
+              name="phoneNumber"
+              type="tel"
+              [(ngModel)]="profile.phoneNumber"
+              maxlength="30"
+              autocomplete="tel"
+            />
+            @if (school()) {
+              <label for="profile-school">Nazwa szkoły</label>
+              <input
+                pInputText
+                id="profile-school"
+                name="schoolName"
+                [(ngModel)]="profile.schoolName"
+                maxlength="200"
+                required
+              />
+              <label for="profile-address">Adres szkoły</label>
+              <input
+                pInputText
+                id="profile-address"
+                name="schoolAddress"
+                [(ngModel)]="profile.schoolAddress"
+                maxlength="300"
+              />
+            }
+            <button
+              pButton
+              class="button dark"
+              type="submit"
+              [disabled]="busy()"
+            >
+              Zapisz dane
+            </button>
+          </form>
+        </div>
+        @if (admin()) {
+          <div class="account-panel">
+            <h2>Panel administratora</h2>
+            <p>Zarządzaj wydarzeniami i treściami strony.</p>
+            <a
+              pButton
+              class="button dark"
+              [href]="adminUrl"
+            >
+              Otwórz panel
+              <app-icon name="diagonal" />
+            </a>
+          </div>
+        }
+      }
+      @if (tab() === 'security') {
+        <div class="account-settings">
+          <div class="account-panel">
+            <h2>{{ user.hasPassword ? 'Zmień hasło' : 'Ustaw hasło' }}</h2>
+            <form
+              class="account-form"
+              (ngSubmit)="savePassword()"
+            >
+              @if (user.hasPassword) {
+                <label for="current-password">Bieżące hasło</label>
+                <input
+                  pInputText
+                  id="current-password"
+                  name="currentPassword"
+                  type="password"
+                  autocomplete="current-password"
+                  [(ngModel)]="currentPassword"
+                  required
+                />
+              }
+              <label for="new-password">Nowe hasło</label>
+              <input
+                pInputText
+                id="new-password"
+                name="newPassword"
+                type="password"
+                autocomplete="new-password"
+                [(ngModel)]="newPassword"
+                aria-describedby="new-password-requirements"
+                required
+                minlength="12"
+                maxlength="128"
+              />
+              <app-password-requirements
+                id="new-password-requirements"
+                [password]="newPassword"
+              />
+              <label for="new-password-repeat">Powtórz nowe hasło</label>
+              <input
+                pInputText
+                id="new-password-repeat"
+                name="newPasswordAgain"
+                type="password"
+                autocomplete="new-password"
+                [(ngModel)]="newPasswordAgain"
+                required
+                maxlength="128"
+              />
+              <button
+                pButton
+                class="button dark"
+                type="submit"
+                [disabled]="busy()"
+              >
+                Zapisz hasło
+              </button>
+            </form>
+          </div>
+          <div class="account-panel">
+            <h2>Adres e-mail</h2>
+            <p>{{ user.email }} · {{ user.emailConfirmed ? 'potwierdzony' : 'niepotwierdzony' }}</p>
+            @if (!user.emailConfirmed) {
+              <button
+                pButton
+                class="button outline"
+                (click)="changeEmail(user.email)"
+                [disabled]="busy() || !account.emailEnabled()"
+              >
+                Wyślij link potwierdzający
+              </button>
+            }
+            <form
+              class="account-form"
+              (ngSubmit)="changeEmail(newEmail)"
+            >
+              <label for="new-email">Nowy adres e-mail</label>
+              <input
+                pInputText
+                id="new-email"
+                name="newEmail"
+                type="email"
+                autocomplete="email"
+                [(ngModel)]="newEmail"
+                required
+                maxlength="254"
+              />
+              <button
+                pButton
+                class="button dark"
+                type="submit"
+                [disabled]="busy() || !account.emailEnabled()"
+              >
+                Zmień adres e-mail
+              </button>
+            </form>
+            @if (!account.emailEnabled()) {
+              <p class="account-hint">Wysyłka linków e-mail jest chwilowo niedostępna.</p>
+            }
+          </div>
+          <div class="account-panel">
+            <h2>Podłączone konta</h2>
+            @for (provider of account.providers(); track provider.name) {
+              <div class="account-provider-row">
+                <span>{{ provider.name }}</span>
+                @if (user.logins.includes(provider.name)) {
+                  <button
+                    pButton
+                    class="button outline"
+                    (click)="unlink(provider.name)"
+                    [disabled]="busy()"
+                  >
+                    Odłącz
+                  </button>
+                } @else {
+                  <button
+                    pButton
+                    class="button outline"
+                    (click)="external(provider.name, true)"
+                    [disabled]="busy() || !provider.configured"
+                  >
+                    Podłącz
+                  </button>
+                }
+              </div>
+            }
+          </div>
+          <div class="account-panel">
+            <h2>Sesje i dane</h2>
+            <p>Wylogowanie ze wszystkich urządzeń unieważni także obecną sesję.</p>
+            <div class="account-actions">
+              <button
+                pButton
+                class="button outline"
+                (click)="logout(true)"
+                [disabled]="busy()"
+              >
+                Wyloguj ze wszystkich urządzeń
+              </button>
+              <button
+                pButton
+                class="button outline"
+                (click)="exportAccount()"
+                [disabled]="busy()"
+              >
+                Pobierz dane konta
+              </button>
+              <button
+                pButton
+                class="button outline account-danger"
+                (click)="deleteVisible.set(true)"
+                [disabled]="busy()"
+              >
+                Usuń konto
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+      @if (tab() === 'users' && admin()) {
+        <div class="account-panel">
+          <h2>Zarządzanie użytkownikami</h2>
+          <form
+            class="account-search"
+            (ngSubmit)="loadUsers()"
+          >
+            <label
+              class="sr-only"
+              for="user-search"
+            >
+              Szukaj po imieniu lub e-mailu
+            </label>
+            <input
+              pInputText
+              id="user-search"
+              name="query"
+              [(ngModel)]="userQuery"
+              placeholder="Imię lub e-mail"
+            />
+            <button
+              pButton
+              class="button dark"
+              type="submit"
+              [disabled]="busy()"
+            >
+              Szukaj
+            </button>
+          </form>
+          @for (item of users(); track item.id) {
+            <div class="account-user-row">
+              <div>
+                <strong>{{ item.displayName }}</strong>
+                <p>{{ item.email }}</p>
+              </div>
+              <label
+                [for]="'role-' + item.id"
+                class="sr-only"
+              >
+                Rodzaj konta: {{ item.email }}
+              </label>
+              <p-select
+                [inputId]="'role-' + item.id"
+                [ariaLabel]="'Rodzaj konta: ' + item.email"
+                [ngModel]="item.roles[0]"
+                (ngModelChange)="setRole(item, $event)"
+                [disabled]="busy()"
+                [options]="roleOptions"
+                optionLabel="label"
+                optionValue="value"
+                appendTo="body"
+              />
+            </div>
+          }
+          <div class="account-actions">
+            <button
+              pButton
+              class="button outline"
+              (click)="loadUsers(userPage - 1)"
+              [disabled]="busy() || userPage === 0"
+            >
+              Poprzednia
+            </button>
+            <span>Liczba kont: {{ totalUsers() }}</span>
+            <button
+              pButton
+              class="button outline"
+              (click)="loadUsers(userPage + 1)"
+              [disabled]="busy() || (userPage + 1) * 25 >= totalUsers()"
+            >
+              Następna
+            </button>
+          </div>
+        </div>
+      }
+    }
+  }
+  @if (account.user() && tab() === 'favorites') {
+    <section
+      class="account-favorites"
+      aria-labelledby="favorites-title"
+    >
+      <h2 id="favorites-title">Twoje ulubione</h2>
+      <h3>Artyści</h3>
+      @if (savedArtists().length) {
+        <ul class="saved-artists">
+          @for (artist of savedArtists(); track artist.id) {
+            <li>
+              <a [routerLink]="['/artysta', artist.id]">
+                <app-icon name="user" />
+                {{ artist.name }}
+                <app-icon name="arrow" />
+              </a>
+              <button
+                type="button"
+                class="text-link"
+                [disabled]="account.savingArtist()"
+                (click)="removeArtist(artist.id)"
+                [attr.aria-label]="'Usuń z ulubionych: ' + artist.name"
+              >
+                Usuń
+              </button>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p>Dodaj artystę do ulubionych na jego profilu.</p>
+      }
+      <h3>Wydarzenia</h3>
+      @if (saved().length) {
+        <div class="event-grid">
+          @for (event of saved(); track event.id) {
+            <app-event-card [event]="event" />
+          }
+        </div>
+      } @else {
+        <p>Dotknij serduszka przy wydarzeniu, aby wrócić do niego później.</p>
+        <a
+          class="text-link"
+          routerLink="/repertuar"
+        >
+          Odkryj repertuar
+          <app-icon name="arrow" />
+        </a>
+      }
+    </section>
+  }
+</section>
+<p-dialog
+  header="Usunąć konto?"
+  appendTo="body"
+  [visible]="deleteVisible()"
+  (visibleChange)="deleteVisible.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [style]="{ width: '440px', maxWidth: 'calc(100vw - 32px)' }"
+>
+  <p>
+    Usuniemy Twój profil, podłączone konta i ulubione zapisane na koncie. Tej operacji nie można
+    cofnąć.
+  </p>
+  <form
+    class="account-form"
+    (ngSubmit)="deleteAccount()"
+  >
+    @if (account.user()?.hasPassword) {
+      <label for="delete-password">Bieżące hasło</label>
+      <input
+        pInputText
+        id="delete-password"
+        name="deletePassword"
+        type="password"
+        autocomplete="current-password"
+        [(ngModel)]="deletePassword"
+        required
+      />
+    }
+    <label for="delete-confirmation">Wpisz USUŃ, aby potwierdzić</label>
+    <input
+      pInputText
+      id="delete-confirmation"
+      name="confirmation"
+      [(ngModel)]="confirmation"
+      required
+    />
+    @if (error()) {
+      <p role="alert">{{ error() }}</p>
+    }
+    <button
+      pButton
+      class="button dark"
+      type="submit"
+      [disabled]="busy() || confirmation !== 'USUŃ'"
+    >
+      Usuń konto
+    </button>
+    <button
+      pButton
+      class="button outline"
+      type="button"
+      (click)="deleteVisible.set(false)"
+      [disabled]="busy()"
+    >
+      Zachowaj konto
+    </button>
+  </form>
+</p-dialog>

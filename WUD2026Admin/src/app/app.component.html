@@ -1,0 +1,24 @@
+@if (account.loading()) {
+  <main class="container page-intro">
+    <h1>Panel administratora</h1>
+    <p role="status">Sprawdzam uprawnienia…</p>
+  </main>
+} @else if (account.user()?.roles?.includes('Admin')) {
+  <router-outlet />
+} @else {
+  <main class="container page-intro">
+    <h1>Panel administratora</h1>
+    <p>Zaloguj się na konto administratora w Koncie melomana.</p>
+    <a [href]="publicSite + '/konto'">Przejdź do logowania</a>
+    <button
+      type="button"
+      (click)="account.refresh()"
+    >
+      Sprawdź ponownie
+    </button>
+  </main>
+}
+<p-toast
+  position="bottom-right"
+  styleClass="editor-toast"
+/>

@@ -1,0 +1,169 @@
+<fieldset class="event-details-fields">
+  <legend>Rozszerzone dane wydarzenia</legend>
+  <p>
+    Uzupełniaj tylko potwierdzone informacje. Puste sekcje nie pojawią się na stronie. Adresy
+    mediów: HTTPS lub lokalne /images/ i /files/.
+  </p>
+  <div class="field">
+    <label for="event-type">Typ wydarzenia</label>
+    <p-select
+      inputId="event-type"
+      [options]="types"
+      optionLabel="label"
+      optionValue="value"
+      [ngModel]="value.type || 'concert'"
+      (ngModelChange)="set('type', $event)"
+      [ngModelOptions]="standalone"
+      appendTo="body"
+    />
+  </div>
+  <div class="field-grid">
+    <ng-container
+      [ngTemplateOutlet]="fields"
+      [ngTemplateOutletContext]="{ items: basics, prefix: '' }"
+    />
+  </div>
+  <div class="field">
+    <label for="event-accessibility">Potwierdzone udogodnienia — filtry</label>
+    <p-multiselect
+      inputId="event-accessibility"
+      [options]="access"
+      optionLabel="label"
+      optionValue="value"
+      [ngModel]="value.accessibility ?? []"
+      (ngModelChange)="set('accessibility', $event)"
+      [ngModelOptions]="standalone"
+      appendTo="body"
+    />
+  </div>
+  @for (group of groups; track group.key) {
+    <details>
+      <summary>{{ group.title }}</summary>
+      <div class="field-grid">
+        <ng-container
+          [ngTemplateOutlet]="fields"
+          [ngTemplateOutletContext]="{ items: group.fields, prefix: group.key + '.' }"
+        />
+      </div>
+    </details>
+  }
+  @for (group of lists; track group.key) {
+    <details>
+      <summary>{{ group.title }} ({{ items(group.key).length }})</summary>
+      @for (item of items(group.key); track $index; let i = $index) {
+        <fieldset>
+          <legend>Pozycja {{ i + 1 }}</legend>
+          <div class="field-grid">
+            <ng-container
+              [ngTemplateOutlet]="fields"
+              [ngTemplateOutletContext]="{ items: group.fields, prefix: group.key + '.' + i + '.' }"
+            />
+          </div>
+          <button
+            pButton
+            class="button outline"
+            type="button"
+            (click)="remove(group.key, i)"
+          >
+            Usuń pozycję {{ i + 1 }}
+          </button>
+        </fieldset>
+      }
+      <button
+        pButton
+        class="button outline"
+        type="button"
+        [disabled]="items(group.key).length >= 50"
+        (click)="add(group.key)"
+      >
+        Dodaj: {{ group.title }}
+      </button>
+    </details>
+  }
+</fieldset>
+<ng-template
+  #fields
+  let-items="items"
+  let-prefix="prefix"
+>
+  @for (field of items; track field.key) {
+    <div
+      class="field"
+      [class.wide]="field.kind === 'textarea' || field.kind === 'lines'"
+    >
+      <label [attr.for]="'detail-' + prefix + field.key">{{ field.label }}</label>
+      @switch (field.kind) {
+        @case ('checkbox') {
+          <p-checkbox
+            [inputId]="'detail-' + prefix + field.key"
+            [binary]="true"
+            [ngModel]="display(prefix + field.key, field.kind)"
+            (ngModelChange)="set(prefix + field.key, $event, field.kind)"
+            [ngModelOptions]="standalone"
+          />
+        }
+        @case ('number') {
+          <p-inputnumber
+            [inputId]="'detail-' + prefix + field.key"
+            [min]="0"
+            [max]="field.max ?? 10000"
+            [maxFractionDigits]="2"
+            [useGrouping]="false"
+            [ngModel]="display(prefix + field.key, field.kind)"
+            (ngModelChange)="set(prefix + field.key, $event, field.kind)"
+            [ngModelOptions]="standalone"
+          />
+        }
+        @case ('date') {
+          <app-date-input
+            [inputId]="'detail-' + prefix + field.key"
+            kind="date"
+            [ngModel]="display(prefix + field.key)"
+            (ngModelChange)="set(prefix + field.key, $event)"
+            [ngModelOptions]="standalone"
+          />
+        }
+        @case ('datetime') {
+          <app-date-input
+            [inputId]="'detail-' + prefix + field.key"
+            kind="datetime"
+            [ngModel]="display(prefix + field.key)"
+            (ngModelChange)="set(prefix + field.key, $event)"
+            [ngModelOptions]="standalone"
+          />
+        }
+        @case ('textarea') {
+          <textarea
+            pTextarea
+            [id]="'detail-' + prefix + field.key"
+            [maxlength]="field.max ?? 5000"
+            rows="4"
+            [ngModel]="display(prefix + field.key)"
+            (ngModelChange)="set(prefix + field.key, $event)"
+            [ngModelOptions]="standalone"
+          ></textarea>
+        }
+        @case ('lines') {
+          <textarea
+            pTextarea
+            [id]="'detail-' + prefix + field.key"
+            rows="3"
+            [ngModel]="display(prefix + field.key, field.kind)"
+            (ngModelChange)="set(prefix + field.key, $event, field.kind)"
+            [ngModelOptions]="standalone"
+          ></textarea>
+        }
+        @default {
+          <input
+            pInputText
+            [id]="'detail-' + prefix + field.key"
+            [maxlength]="field.max ?? 2048"
+            [ngModel]="display(prefix + field.key)"
+            (ngModelChange)="set(prefix + field.key, $event)"
+            [ngModelOptions]="standalone"
+          />
+        }
+      }
+    </div>
+  }
+</ng-template>
